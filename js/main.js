@@ -129,7 +129,7 @@ var coreCommands = {
         "usage": "export",
         "gen": function(q, args) {
             return {
-                "text": localStorage.getItem(ALIASES_KEY)
+                "text": "<textarea class='textarea config-textarea' placeholder='Config string' rows=20>"+localStorage.getItem(ALIASES_KEY)+"</textarea>"
             }
         }
     }
@@ -322,9 +322,14 @@ function listAll() {
 
 // Writes the given content into the correct div
 function displayContent(content) {
-    document.addEventListener("DOMContentLoaded", function(event) {
+    // If updating fails because dom is not loaded, then wait for it to load.
+    try {
         document.getElementById('content').innerHTML = content;
-    });
+    } catch (e) {
+        document.addEventListener("DOMContentLoaded", function(event) {
+            document.getElementById('content').innerHTML = content;
+        });
+    }
 }
 
 // Entry point, bootstrap and check if requirements are met.
