@@ -1,0 +1,99 @@
+<html>
+
+<head>
+    <title>URL Command</title>
+    <link type="application/opensearchdescription+xml" rel="search" href="osd.xml">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script src="js/system.js"></script>
+    <script src="js/main.js"></script>
+    <link rel="stylesheet" href="css/bulma.min.css">
+    <link rel="search" type="application/opensearchdescription+xml" href="osd.xml" title="URL command">
+    <style type="text/css">
+    .table,
+    tt,
+    pre {
+        font-family: Monaco, Menlo, monospace;
+    }
+    
+    .section,
+    .header {
+        background: none;
+    }
+    
+    tt {
+        background-color: #EAEEF7;
+        padding: 2px;
+        border-radius: 2px;
+    }
+    </style>
+</head>
+
+<body>
+    <section class="section">
+        <div class="container">
+            <!-- Main container -->
+            <div class="header">
+                <!-- Left side -->
+                <div class="header-left">
+                    <div class="header-item">
+                        <p class="title">
+                            <a href="index.html">URL Command</a>
+                        </p>
+                    </div>
+                </div>
+                <!-- Right side -->
+                <div class="header-right">
+                    <p class="header-item"><a class="button is-success" id="helpOpen">Install</a></p>
+                </div>
+            </div>
+            <p>
+                <form method="get">
+                    <div class="control has-addons">
+                        <input class="input" type="text" name="q" placeholder="Command. Try 'help'" autofocus="1">
+                        <a class="button is-info">Do it</a>
+                    </div>
+                </form>
+            </p>
+            <br>
+            <div id="content"></div>
+        </div>
+    </section>
+</body>
+<div class="modal" id='help'>
+    <div class="modal-background"></div>
+    <div class="modal-content">
+        <div class="box">
+            <div class="content">
+                <h1>How to install</h1>
+                <p>To install <strong>URL Command</strong>:</p>
+
+                <h3>On Chrome</h3>
+                <ol>
+                    <li>Create a new tab (Ctrl T) so you can still view the instructions here</li>
+                    <li>Copy and paste <tt>chrome://settings/searchEngines</tt> into the url bar</li>
+                    <li>Add <tt>https://daniellowtw.github.io/urlcmd/?q=%s</tt> as a custom search engine
+                    <li>Pick a keyword, for example <strong>sb</strong></li>
+                </ol>
+                
+                <h3> On Firefox/Opera/Vivaldi </h3>
+                <ol>
+                    <li>Right click the following field: <form method="get"><input type="search" name="q"></form></li>
+                    <li>Choose "Add As Search Engine..."</li>
+                    <li>Pick a keyword, for example <strong>sb</strong></li>
+
+                </ol>
+                <p>
+                    Now you can access it by typing
+                    <tt>sb &lt;command [query]&gt;</tt> in the URL bar. Try
+                    <tt>sb list</tt>
+                </p>
+            </div>
+        </div>
+    </div>
+    <button class="modal-close"></button>
+</div>
+
+</html>

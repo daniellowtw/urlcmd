@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/" xmlns:moz="http://www.mozilla.org/2006/browser/search/">
+  <ShortName>URL command</ShortName>
+  <Description>A customizable URL command bar</Description>
+  <Tags>URL command</Tags>
+  <Url type="text/html" method="get" template="https://daniellowtw.github.io/urlcmd/?q={searchTerms}"/>
+  <InputEncoding>UTF-8</InputEncoding>
+  <moz:SearchForm>https://daniellowtw.github.io/urlcmd</moz:SearchForm>
+  <Url type="application/opensearchdescription+xml" rel="self" template="https://daniellowtw.github.io/urlcmd/osd.xml"/>
+</OpenSearchDescription>
