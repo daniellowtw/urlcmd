@@ -113,15 +113,23 @@ var coreCommands = {
 
             var name = args[0];
             var url = args[1];
-            importFromURL(name, url).then(x => {
-                localStorage.setItem(name, JSON.stringify(x));
+            importFromURL(name, url).then(cmd => {
                 aliases = getAliases();
-                aliases[name] = x;
+                aliases[name] = cmd;
                 setAliases(aliases);
             }).catch(console.log)
 
             return {
                 "text": "Imported as " + name
+            }
+        }
+    },
+    "export": {
+        "desc": "Output the current aliases for sharing",
+        "usage": "export",
+        "gen": function(q, args) {
+            return {
+                "text": localStorage.getItem(ALIASES_KEY)
             }
         }
     }
@@ -178,17 +186,13 @@ function CommandSetLoader(commandSet, opts) {
                     url: utils.format.apply(null, params)
                 };
             } else if (r.genSrc) {
-                var cmd = localStorage[cmd]
-                if (!cmd) {
-                    return false;
-                }
                 try {
-                    var temp = JSON.parse(cmd)
-                    var x = (new Function("return " + temp.genString))();
+                    var x = (new Function("return " + r.genString))();
                 }
                 catch (err) {
-                    console.log("bad imported code", err)
-                    return false;
+                    return {
+                        "text" : "bad imported code" + err
+                    }
                 }
                 return x.apply(null, args ? args.split(/\s+/) : []);
             } else if (r.gen) {
@@ -334,10 +338,9 @@ if (supports_html5_storage()) {
             }
         }
     } 
-    // else {
-        // listAll()
-    // }
+    else {
         listAll()
+    }
 
 } else {
     document.write("This app requires Localstorage but it is not supported by your browser. Please use a newer browser.")
