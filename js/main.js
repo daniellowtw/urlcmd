@@ -136,7 +136,7 @@ var coreCommands = {
 };
 
 function importFromURL(name, url) {
-    return System.import(url).then(m=>{
+    return System.import(url).then(m => {
         var x = m(name, utils);
         x.genString = x.gen.toString()
         x.genSrc = true;
@@ -188,10 +188,9 @@ function CommandSetLoader(commandSet, opts) {
             } else if (r.genSrc) {
                 try {
                     var x = (new Function("return " + r.genString))();
-                }
-                catch (err) {
+                } catch (err) {
                     return {
-                        "text" : "bad imported code" + err
+                        "text": "bad imported code" + err
                     }
                 }
                 return x.apply(null, args ? args.split(/\s+/) : []);
@@ -294,6 +293,8 @@ function splitArgs(loc) {
 function listAll() {
     var result = [];
     var seen = {};
+    // hacks to make sure we load latest aliases
+    loaders[0] = AliasLoader()
     for (var i = 0; i < loaders.length; i++) {
         if (!loaders[i].list) {
             continue;
@@ -308,9 +309,15 @@ function listAll() {
             }
         }
     };
-    document.addEventListener("DOMContentLoaded", function(event) {
+
+    // If updating fails because dom is not loaded, then wait for it to load.
+    try {
         document.getElementById('content').innerHTML = displayEntries(result);
-    });
+    } catch (e) {
+        document.addEventListener("DOMContentLoaded", function(event) {
+            document.getElementById('content').innerHTML = displayEntries(result);
+        });
+    }
 }
 
 // Writes the given content into the correct div
@@ -324,6 +331,7 @@ function displayContent(content) {
 if (supports_html5_storage()) {
     document.addEventListener("DOMContentLoaded", function(event) {
         setUpHelp();
+        setUpLoad();
     });
 
     var searchQuery = splitArgs(window.location).q;
@@ -337,8 +345,7 @@ if (supports_html5_storage()) {
                 displayContent(r.text);
             }
         }
-    } 
-    else {
+    } else {
         listAll()
     }
 
@@ -370,6 +377,37 @@ function setUpHelp() {
     }
 }
 
+// setUpLoad bootstraps the load mechanism.
+function setUpLoad() {
+    function importStuff() {
+        var x = document.getElementById('importContent').value;
+        try {
+            var res = JSON.parse(x)
+            localStorage.setItem(ALIASES_KEY, x);
+            loadEl.className = currentClass;
+            displayContent("loaded")
+            listAll()
+        } catch (err) {
+            alert("loading: " + err)
+        }
+    }
+
+    var loadEl = document.getElementById('load')
+    var currentClass = loadEl.className
+    document.getElementById('loadOpen').onclick = () => {
+            loadEl.className += " is-active";
+        }
+        // add handler for cancel button
+    document.getElementById('submitLoadBtn').onclick = importStuff
+        // add handler for cancel button
+    document.getElementById('cancelLoadBtn').onclick = () => {
+            loadEl.className = currentClass;
+        }
+        // add handler for top right cross
+    loadEl.lastElementChild.onclick = () => {
+        loadEl.className = currentClass;
+    }
+}
 
 // displayEntries takes a result and returns a html string for representing the result in a table
 function displayEntries(result, opts) {

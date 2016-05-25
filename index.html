@@ -46,6 +46,7 @@
                 </div>
                 <!-- Right side -->
                 <div class="header-right">
+                    <p class="header-item"><a class="button is-success" id="loadOpen">Load config</a></p>
                     <p class="header-item"><a class="button is-success" id="helpOpen">Install</a></p>
                 </div>
             </div>
@@ -90,6 +91,25 @@
                     <tt>sb &lt;command [query]&gt;</tt> in the URL bar. Try
                     <tt>sb list</tt>
                 </p>
+            </div>
+        </div>
+    </div>
+    <button class="modal-close"></button>
+</div>
+
+<div class="modal" id='load'>
+    <div class="modal-background"></div>
+    <div class="modal-content">
+        <div class="box">
+            <div class="content">
+            <label class="label">Load</label>
+            <p class="control">
+                <textarea class="textarea import" placeholder="Config string" id="importContent"></textarea>
+            </p>
+            <p class="control">
+                <button class="button is-primary" id="submitLoadBtn">Submit</button>
+                <button class="button is-link" id="cancelLoadBtn">Cancel</button>
+            </p>
             </div>
         </div>
     </div>
