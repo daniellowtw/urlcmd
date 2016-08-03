@@ -3,8 +3,13 @@
   <ShortName>URL command</ShortName>
   <Description>A customizable URL command bar</Description>
   <Tags>URL command</Tags>
-  <Url type="text/html" method="get" template="https://daniellowtw.github.io/urlcmd/?q={searchTerms}"/>
   <InputEncoding>UTF-8</InputEncoding>
   <moz:SearchForm>https://daniellowtw.github.io/urlcmd</moz:SearchForm>
-  <Url type="application/opensearchdescription+xml" rel="self" template="https://daniellowtw.github.io/urlcmd/osd.xml"/>
+  <Url type="application/opensearchdescription+xml" rel="self" template="/osd.xml"/>
+  <Url type="text/html" method="get" template="https://daniellowtw.github.io/urlcmd/?q={searchTerms}"/>
+  <Url type="application/x-suggestions+json"
+    template="https://daniellowtw.github.io/urlcmd/?q={searchTerms}" />
+  <Language>en</Language>
+  <OutputEncoding>UTF-8</OutputEncoding>
+  <InputEncoding>UTF-8</InputEncoding>
 </OpenSearchDescription>
