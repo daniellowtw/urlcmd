@@ -276,7 +276,13 @@ function navigate(url) {
 
 // splitArgs parses the query from the url. It converts ?q=foo%20bar%20car into {"q":"foo bar car"}
 function splitArgs(loc) {
-    var s = loc.search;
+    var hash = loc.hash.substr(1);
+    hash = decodeURIComponent(hash.replace(/\+/g, '%20'))
+    if (hash !== "") {
+        return {q:hash}
+    }
+    var s = loc.search
+    var s = decodeURIComponent(s.replace(/\+/g, '%20'))
     var result = {};
     var pairs = s.split(/[&?]/);
     for (var i = 0; i < pairs.length; i++) {
@@ -312,10 +318,10 @@ function listAll() {
 
     // If updating fails because dom is not loaded, then wait for it to load.
     try {
-        document.getElementById('content').innerHTML = displayEntries(result);
+        document.getElementById('list-all-content').innerHTML = displayEntries(result);
     } catch (e) {
         document.addEventListener("DOMContentLoaded", function(event) {
-            document.getElementById('content').innerHTML = displayEntries(result);
+            document.getElementById('list-all-content').innerHTML = displayEntries(result);
         });
     }
 }
@@ -339,20 +345,7 @@ if (supports_html5_storage()) {
         setUpLoad();
     });
 
-    var searchQuery = splitArgs(window.location).q;
-    if (searchQuery) {
-        document.title = searchQuery;
-        var r = applyLoader(searchQuery);
-        if (r) {
-            if (r.url) {
-                navigate(r.url);
-            } else if (r.text) {
-                displayContent(r.text);
-            }
-        }
-    } else {
-        listAll()
-    }
+    executeCmd()
 
 } else {
     document.write("This app requires Localstorage but it is not supported by your browser. Please use a newer browser.")
@@ -449,4 +442,32 @@ function displayEntries(result, opts) {
     res += "</table><br/>";
     res += "General usage is: <tt>cmd [query]</tt>";
     return res
+}
+
+
+function doQuery() {
+    var el = document.getElementById("query-text");
+    var query = el.value;
+    el.value = "";
+    window.location.href='index.html#' + query; 
+    executeCmd()
+}
+
+function executeCmd() {
+    displayContent(""); // clear content
+    var searchQuery = splitArgs(window.location).q;
+    if (searchQuery) {
+        document.title = searchQuery;
+        var r = applyLoader(searchQuery);
+        if (r) {
+            if (r.url) {
+                navigate(r.url);
+            } else if (r.text) {
+                displayContent(r.text);
+            }
+        }
+        listAll()
+    } else {
+        listAll()
+    }
 }

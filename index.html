@@ -52,15 +52,15 @@
                 </div>
             </div>
             <p>
-                <form method="get">
+                <form method="get" onsubmit="doQuery(); return false;">
                     <div class="control has-addons">
-                        <input class="input" type="text" name="q" placeholder="Command. Try 'help'" autofocus="1">
-                        <a class="button is-info">Do it</a>
+                        <input id="query-text" class="input" type="text" name="q" placeholder="Command. Try 'help'" autofocus="1">
                     </div>
                 </form>
             </p>
             <br>
             <div id="content"></div>
+            <div id="list-all-content"></div>
         </div>
     </section>
 </body>
@@ -76,7 +76,7 @@
                 <ol>
                     <li>Create a new tab (Ctrl T) so you can still view the instructions here</li>
                     <li>Copy and paste <tt>chrome://settings/searchEngines</tt> into the url bar</li>
-                    <li>Add <tt>https://daniellowtw.github.io/urlcmd/?q=%s</tt> as a custom search engine
+                    <li>Add <tt>https://daniellowtw.github.io/urlcmd/#%s</tt> as a custom search engine
                     <li>Pick a keyword, for example <strong>sb</strong></li>
                 </ol>
                 
