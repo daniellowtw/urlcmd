@@ -101,6 +101,18 @@ var coreCommands = {
             };
         }
     },
+    "rm": {
+        desc: "Remove aliases",
+        example: "Usage: rm cmd1 cmd2 cmd3<br>",
+        gen: function(q, args) {
+            aliases = getAliases();
+            args.forEach(x=> delete aliases[x]);
+            setAliases(aliases);
+            return {
+                text: "Usage: rm cmd1 cmd2 cmd3<br>"
+            };
+        }
+    },
     "import": {
         "desc": "Import commands/aliases from a url",
         "example": "import bar foo.js",
