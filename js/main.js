@@ -289,12 +289,12 @@ function navigate(url) {
 // splitArgs parses the query from the url. It converts ?q=foo%20bar%20car into {"q":"foo bar car"}
 function splitArgs(loc) {
     var hash = loc.hash.substr(1);
-    hash = decodeURIComponent(hash.replace(/\+/g, '%20'))
+    hash = decodeURIComponent(hash)
     if (hash !== "") {
         return {q:hash}
     }
     var s = loc.search
-    var s = decodeURIComponent(s.replace(/\+/g, '%20'))
+    var s = decodeURIComponent(s)
     var result = {};
     var pairs = s.split(/[&?]/);
     for (var i = 0; i < pairs.length; i++) {
