@@ -2,6 +2,7 @@ function gcd(name, utils) {
     return {
         "desc": "Calculate the gcd of two numbers",
         "example": name + " 5 6 -> 1",
+        "usage": name + " x y",
         "gen":function(a,b) {
             function gcd(a,b){
                 if (a > b ) {

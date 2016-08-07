@@ -79,25 +79,27 @@ var coreCommands = {
     },
     "alias": {
         desc: "Add or remove an alias",
-        example: "alias hn https://news.ycombinator.com<br>alias foo http://{0}.{1}.com",
+        example: "alias hn https://news.ycombinator.com<br>alias foo http://{0}.{1}.com<br>",
+        usage: "alias name target [target if no args]",
 
         gen: function(q, args) {
-            if (args[0]) {
+            var cmdName = args[0].toLowerCase();
+            if (cmdName) {
                 aliases = getAliases();
-                if (!args[1]) {
-                    delete aliases[args[0]];
+                if (args.length == 1) {
+                    delete aliases[cmdName];
                 } else {
-                    aliases[args[0]] = {
-                        target: args[1].match(/^[a-zA-Z_\-$]+$/) ? args[1] : undefined,
+                    aliases[cmdName] = {
+                        target: args[1].match(/^[a-zA-Z_\-$]+$/) ? args[1] : undefined, // points to another command
                         url: args[1].match(/^[a-zA-Z_\-$]+$/) ? undefined : args[1],
                         urlNoArgs: args[2],
-                        desc: args[1]
+                        desc: "redirects: <i>" + args[1] +  "</i>" + (args[2] === undefined ? "" : "<br>Without args: <i>" + args[2] + "</i>"), 
                     };
                 }
                 setAliases(aliases)
             }
             return {
-                text: "Usage: alias [cmd [cmd|&lt;url [url when no arguments given]&gt;]]<br>"
+                text: "Invalid usage",
             };
         }
     },
