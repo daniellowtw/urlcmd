@@ -8,16 +8,20 @@
     "homepage_url": "https://github.com/daniellowtw/urlcmd",
     "browser_action": {
         "default_title": "UrlCmd",
-        "default_icon": "go.png", //Used as the icon in the Chrome toolbar 
         "default_popup": "index.html"
     },
-    "permissions": [
-        "http://localhost:6060/*",
-        "https://tip.golang.org/*"
-    ],
-    "background": { "scripts": ["background.js"] },
+    "background": { 
+        "page" : "index.html",
+        "persistent" : false
+    },
     "omnibox": { "keyword": "url" },
-    "icons": {
-        "16": "go.png"
-    }
+    "commands": {
+        "shortcut" : {
+            "suggested_key" : {
+                "default" : "Alt+G"
+            },
+            "description": "Open the urlcmd page"
+        }
+    },
+    "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
 }

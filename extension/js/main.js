@@ -79,25 +79,27 @@ var coreCommands = {
     },
     "alias": {
         desc: "Add or remove an alias",
-        example: "alias hn https://news.ycombinator.com<br>alias foo http://{0}.{1}.com",
+        example: "alias hn https://news.ycombinator.com<br>alias foo http://{0}.{1}.com<br>",
+        usage: "alias name target [target if no args]",
 
         gen: function(q, args) {
-            if (args[0]) {
+            var cmdName = args[0].toLowerCase();
+            if (cmdName) {
                 aliases = getAliases();
-                if (!args[1]) {
-                    delete aliases[args[0]];
+                if (args.length == 1) {
+                    delete aliases[cmdName];
                 } else {
-                    aliases[args[0]] = {
-                        target: args[1].match(/^[a-zA-Z_\-$]+$/) ? args[1] : undefined,
+                    aliases[cmdName] = {
+                        target: args[1].match(/^[a-zA-Z_\-$]+$/) ? args[1] : undefined, // points to another command
                         url: args[1].match(/^[a-zA-Z_\-$]+$/) ? undefined : args[1],
                         urlNoArgs: args[2],
-                        desc: args[1]
+                        desc: "redirects: <i>" + args[1] +  "</i>" + (args[2] === undefined ? "" : "<br>Without args: <i>" + args[2] + "</i>"), 
                     };
                 }
                 setAliases(aliases)
             }
             return {
-                text: "Usage: alias [cmd [cmd|&lt;url [url when no arguments given]&gt;]]<br>"
+                text: "Invalid usage",
             };
         }
     },
@@ -289,12 +291,12 @@ function navigate(url) {
 // splitArgs parses the query from the url. It converts ?q=foo%20bar%20car into {"q":"foo bar car"}
 function splitArgs(loc) {
     var hash = loc.hash.substr(1);
-    hash = decodeURIComponent(hash.replace(/\+/g, '%20'))
+    hash = decodeURIComponent(hash)
     if (hash !== "") {
         return {q:hash}
     }
     var s = loc.search
-    var s = decodeURIComponent(s.replace(/\+/g, '%20'))
+    var s = decodeURIComponent(s)
     var result = {};
     var pairs = s.split(/[&?]/);
     for (var i = 0; i < pairs.length; i++) {
@@ -352,12 +354,12 @@ function displayContent(content) {
 
 // Entry point, bootstrap and check if requirements are met.
 if (supports_html5_storage()) {
+    executeCmd();
     document.addEventListener("DOMContentLoaded", function(event) {
         setUpHelp();
         setUpLoad();
+        setUpAutoComplete();
     });
-
-    executeCmd()
 
 } else {
     document.write("This app requires Localstorage but it is not supported by your browser. Please use a newer browser.")
@@ -457,12 +459,15 @@ function displayEntries(result, opts) {
 }
 
 
-function doQuery() {
-    var el = document.getElementById("query-text");
-    var query = el.value;
-    el.value = "";
-    window.location.href='index.html#' + query; 
-    executeCmd()
+function doQuery(text) {
+    var query = text;
+    if (query === "") {
+        var el = document.getElementById("query-text");
+        query = el.value;
+        el.value = "";
+    }
+    window.location.href='index.html#' + query; // Will not trigger refresh
+    executeCmd();
 }
 
 function executeCmd() {
@@ -482,4 +487,72 @@ function executeCmd() {
     } else {
         listAll()
     }
+}
+
+function makeList(obj) {
+    var x = [];
+    for (var key in obj) {
+        var temp = obj[key]; // maybe clone
+        temp.name = key;
+        x.push(temp);
+    }
+    for (var i in baseCommands) {
+        var temp = baseCommands[i]; // maybe clone
+        temp.name = i;
+        x.push(temp);
+
+    }
+    for (var i in coreCommands) {
+        var temp = coreCommands[i]; // maybe clone
+        temp.name = i;
+        x.push(temp);
+    }
+
+    return x;
+}
+
+function doSearch(text) {
+    // TODO: cache this so we don't always update
+    var list = makeList(getAliases());
+    var res = [];
+    list.forEach(x => {
+        res.push({"name":x["name"], "usage": x["usage"]||undefined})
+    })
+    return res;
+}
+
+function setUpAutoComplete() {
+   var pv = completely(document.getElementById('container-search'));
+   pv.options = [];
+   pv.repaint(); 
+
+    pv.onChange = function (text) {
+        if (text.length == 0) {
+            pv.options = [];
+            pv.repaint();
+            return; 
+        }
+        var oj = doSearch(text);
+        pv.options =[];
+        for (var i in oj) { pv.options.push(oj[i].usage || oj[i].name); }
+        pv.repaint();
+        pv.input.focus();
+    };
+
+    // Hacks to fix stying of the generated elements
+    pv.input.className="input"
+    pv.input.placeholder="Command. Try 'help'"
+    pv.hint.className="input"
+    pv.prompt.className="input"
+    pv.wrapper.className="control has-addons"
+
+    // Trigger search when user enters
+    pv.onEnter = function(){
+        doQuery(pv.input.value);
+        pv.setText('');
+    }
+
+   setTimeout(function() {
+    pv.input.focus();
+   },0);
 }

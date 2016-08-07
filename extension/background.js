@@ -11,7 +11,6 @@ const tryHosts = [
 function highlight(text, word) {
   text = text.replace(newRegExpHighlight(word), "\0$1\1");
   text = text.replace(newRegExpFuzzy(word), m => "\0" + m + "\1");
-
   return htmlSafe(text).replace(new RegExp("\0", "g"), "<match>")
                        .replace(new RegExp("\1", "g"), "</match>");
 }
@@ -151,6 +150,12 @@ function sortedFuncs(pkg, funcQuery) {
 }
 
 function parseUserInput(text) {
+  return [{
+        "content": "asdf",
+        "description": "normal<url>foo</url><match>bar</match><dim>car</dim>",
+      }]
+  alert(0);
+
   if(text.length === 0) { return; } // TODO: suggest most commonly used
 
   let words = text.split(/[\s#]+/, 2)
@@ -180,22 +185,46 @@ function parseUserInput(text) {
   }
 }
 
+// When the event is triggered, chrome calls the callback function with the given text and
+// a callback which takes an array of suggestions
 chrome.omnibox.onInputChanged.addListener(
   function(text, suggest) {
     suggest(parseUserInput(text));
   }
 );
 
+// This is triggered when entered is pressed
 chrome.omnibox.onInputEntered.addListener(
   function(text) {
-    if (text === "!") {
-      cachedPkgs  = {};
-      cachedFuncs = {};
-      return;
-    }
     let results = parseUserInput(text);
-    if(results.length === 0) return;
-    let url = `${docHost}/pkg/${results[0].content}`;
-    chrome.tabs.create({url: url});
+    chrome.tabs.create({url: chrome.extension.getURL(`index.html#${text}`)});
   }
 );
+
+// var suggestResultOne = {    
+//      "content" : "Some content", 
+//      "description" : "<b>D</b>escription" 
+//  }; 
+//  var suggestResults = [suggestResultOne]; 
+//  var searchService = "https://www.google.com/"; 
+//  searchService += "search?q=chrome+extensions+developers+"; 
+
+// function CreateWindow(url) { 
+//      var windowCreateData = {"url" : ""}; 
+//      windowCreateData.url = url; 
+//      chrome.windows.create(windowCreateData); 
+//  } 
+
+//  chrome.omnibox.onInputStarted.addListener(function() { 
+//      console.log("<InputStarted>"); 
+//  }); 
+//  chrome.omnibox.onInputChanged.addListener(function(text,suggest) { 
+//      console.log("<InputChanged> Text: " + text); 
+//      suggest(suggestResults); 
+//      // suggest(getSuggestResults(text)); 
+//  }); 
+//  chrome.omnibox.onInputEntered.addListener(function(text,disposition) { 
+//      console.log("<InputEntered> Text: " + text); 
+//      CreateWindow(searchService + text); 
+//      //default disposition is ON_INPUT_ENTERED_DISPOSITION.CURRENT_TAB 
+//  }); 
