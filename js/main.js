@@ -354,12 +354,12 @@ function displayContent(content) {
 
 // Entry point, bootstrap and check if requirements are met.
 if (supports_html5_storage()) {
+    executeCmd();
     document.addEventListener("DOMContentLoaded", function(event) {
         setUpHelp();
         setUpLoad();
+        setUpAutoComplete();
     });
-
-    executeCmd()
 
 } else {
     document.write("This app requires Localstorage but it is not supported by your browser. Please use a newer browser.")
@@ -459,12 +459,15 @@ function displayEntries(result, opts) {
 }
 
 
-function doQuery() {
-    var el = document.getElementById("query-text");
-    var query = el.value;
-    el.value = "";
-    window.location.href='index.html#' + query; 
-    executeCmd()
+function doQuery(text) {
+    var query = text;
+    if (query === "") {
+        var el = document.getElementById("query-text");
+        query = el.value;
+        el.value = "";
+    }
+    window.location.href='index.html#' + query; // Will not trigger refresh
+    executeCmd();
 }
 
 function executeCmd() {
@@ -484,4 +487,72 @@ function executeCmd() {
     } else {
         listAll()
     }
+}
+
+function makeList(obj) {
+    var x = [];
+    for (var key in obj) {
+        var temp = obj[key]; // maybe clone
+        temp.name = key;
+        x.push(temp);
+    }
+    for (var i in baseCommands) {
+        var temp = baseCommands[i]; // maybe clone
+        temp.name = i;
+        x.push(temp);
+
+    }
+    for (var i in coreCommands) {
+        var temp = coreCommands[i]; // maybe clone
+        temp.name = i;
+        x.push(temp);
+    }
+
+    return x;
+}
+
+function doSearch(text) {
+    // TODO: cache this so we don't always update
+    var list = makeList(getAliases());
+    var res = [];
+    list.forEach(x => {
+        res.push({"name":x["name"], "usage": x["usage"]||undefined})
+    })
+    return res;
+}
+
+function setUpAutoComplete() {
+   var pv = completely(document.getElementById('container-search'));
+   pv.options = [];
+   pv.repaint(); 
+
+    pv.onChange = function (text) {
+        if (text.length == 0) {
+            pv.options = [];
+            pv.repaint();
+            return; 
+        }
+        var oj = doSearch(text);
+        pv.options =[];
+        for (var i in oj) { pv.options.push(oj[i].usage || oj[i].name); }
+        pv.repaint();
+        pv.input.focus();
+    };
+
+    // Hacks to fix stying of the generated elements
+    pv.input.className="input"
+    pv.input.placeholder="Command. Try 'help'"
+    pv.hint.className="input"
+    pv.prompt.className="input"
+    pv.wrapper.className="control has-addons"
+
+    // Trigger search when user enters
+    pv.onEnter = function(){
+        doQuery(pv.input.value);
+        pv.setText('');
+    }
+
+   setTimeout(function() {
+    pv.input.focus();
+   },0);
 }

@@ -8,6 +8,7 @@
     <meta name="viewport" content="width=device-width">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <script src="js/system.js"></script>
+    <script src="js/complete.ly.1.0.1.js"></script>
     <script src="js/main.js"></script>
     <link rel="stylesheet" href="css/bulma.min.css">
     <link rel="search" type="application/opensearchdescription+xml" href="osd.xml" title="URL command">
@@ -52,11 +53,7 @@
                 </div>
             </div>
             <p>
-                <form method="get" onsubmit="doQuery(); return false;">
-                    <div class="control has-addons">
-                        <input id="query-text" class="input" type="text" name="q" placeholder="Command. Try 'help'" autofocus="1">
-                    </div>
-                </form>
+                <div id='container-search'></div>
             </p>
             <br>
             <div id="content"></div>
