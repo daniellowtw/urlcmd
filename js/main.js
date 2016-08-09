@@ -66,6 +66,15 @@ var baseCommands = {
                 url: "https://translate.google.com/#" + from + "/" + to + "/" + text
             };
         }
+    },
+    "notepad" : {
+        desc: "create a scratch pad",
+        usage: "notepad",
+        gen: function() {
+            return {
+                url: "data:text/html,<html contenteditable>"
+            };
+        }
     }
 };
 
