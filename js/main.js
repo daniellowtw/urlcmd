@@ -179,6 +179,34 @@ function getAliases() {
     }
 }
 
+function parseArgs(s) {
+    if (s.indexOf(s, '"') == -1) {
+        return s.split(" ");
+    }
+    var spaceSeparatedList = s.split(" ");
+    var res = [];
+    var currWord = "";
+    var currIndex = 0;
+    do {
+        currWord = spaceSeparatedList[currIndex];
+        currIndex++;
+        if (currWord[0] == '"') {
+            currWord= currWord.substr(1)
+            while((currWord[currWord.length-1] != '"') 
+                && (currIndex < spaceSeparatedList.length)) {
+                    var temp = spaceSeparatedList[currIndex];
+                    currIndex++;
+                    if (temp === undefined) {
+                        return spaceSeparatedList;
+                    }
+                    currWord += ` ${temp}`
+                    currWord = currWord.substring(0, currWord.length-1)
+            }
+        }
+        res.push(currWord);
+    } while (currIndex < spaceSeparatedList.length)
+    return res;
+}
 
 // CommandSetLoader tries to execute the command in the command set that corresponds to the name
 function CommandSetLoader(commandSet, opts) {
@@ -187,8 +215,7 @@ function CommandSetLoader(commandSet, opts) {
             var components = q.split(" ");
             var cmd = components[0].toLowerCase();
             var args = q.substring(components[0].length + 1);
-            var params = args.split(" ");
-
+            var params = parseArgs(args);
             var r = commandSet[cmd];
             if (r && r.target) {
                 return applyLoader(
@@ -216,9 +243,9 @@ function CommandSetLoader(commandSet, opts) {
                         "text": "bad imported code" + err
                     }
                 }
-                return x.apply(null, args ? args.split(/\s+/) : []);
+                return x.apply(null, params);
             } else if (r.gen) {
-                return r.gen(args, args ? args.split(/\s+/) : []);
+                return r.gen(args, params);
             }
             return false;
         },
