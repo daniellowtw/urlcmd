@@ -73,9 +73,9 @@ function completely(container, config) {
     if (document.body === undefined) {
         throw 'document.body is undefined. The library was wired up incorrectly.';
     }
-    document.body.appendChild(prompt);            
+    document.body.appendChild(prompt);   
+    var w = 0;         
     // var w = prompt.getBoundingClientRect().right; // works out the width of the prompt.
-    var w = 0; // works out the width of the prompt.
     wrapper.appendChild(prompt);
     prompt.style.visibility = 'visible';
     prompt.style.left = '-'+w+'px';
