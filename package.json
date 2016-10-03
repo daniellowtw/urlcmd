@@ -1,0 +1,34 @@
+{
+  "name": "urlcmd",
+  "version": "1.0.0",
+  "description": "Command line in the browser",
+  "main": "index.js",
+  "directories": {
+    "example": "examples"
+  },
+  "scripts": {
+    "build": "babel js -d build",
+    "test": "node_modules/.bin/mocha --compilers js:babel-core/register",
+    "clean": "rm -rf build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/daniellowtw/urlcmd.git"
+  },
+  "author": "Daniel Low",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/daniellowtw/urlcmd/issues"
+  },
+  "homepage": "https://github.com/daniellowtw/urlcmd#readme",
+  "devDependencies": {
+    "babel-cli": "^6.16.0",
+    "babel-core": "^6.17.0",
+    "babel-plugin-transform-es2015-modules-amd": "^6.8.0",
+    "babel-preset-es2015": "^6.16.0",
+    "chai": "^3.5.0",
+    "eslint": "^3.7.0",
+    "mocha": "^3.1.0",
+    "requirejs": "^2.3.2"
+  }
+}

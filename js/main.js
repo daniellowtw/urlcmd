@@ -1,3 +1,5 @@
+import parseArgs from './parser.js';
+
 var ALIASES_KEY = "sb";
 
 /*
@@ -8,8 +10,6 @@ var ALIASES_KEY = "sb";
     example - using it in action
     gen - execute the function
 */
-
-
 
 var utils = {
     format: function() {
@@ -177,35 +177,6 @@ function getAliases() {
     } catch (ex) {
         return {};
     }
-}
-
-function parseArgs(s) {
-    if (s.indexOf(s, '"') == -1) {
-        return s.split(" ");
-    }
-    var spaceSeparatedList = s.split(" ");
-    var res = [];
-    var currWord = "";
-    var currIndex = 0;
-    do {
-        currWord = spaceSeparatedList[currIndex];
-        currIndex++;
-        if (currWord[0] == '"') {
-            currWord= currWord.substr(1)
-            while((currWord[currWord.length-1] != '"') 
-                && (currIndex < spaceSeparatedList.length)) {
-                    var temp = spaceSeparatedList[currIndex];
-                    currIndex++;
-                    if (temp === undefined) {
-                        return spaceSeparatedList;
-                    }
-                    currWord += ` ${temp}`
-                    currWord = currWord.substring(0, currWord.length-1)
-            }
-        }
-        res.push(currWord);
-    } while (currIndex < spaceSeparatedList.length)
-    return res;
 }
 
 // CommandSetLoader tries to execute the command in the command set that corresponds to the name
