@@ -1,4 +1,5 @@
 import parseArgs from './parser.js';
+import utils from './util.js';
 
 var ALIASES_KEY = "sb";
 
@@ -10,28 +11,6 @@ var ALIASES_KEY = "sb";
     example - using it in action
     gen - execute the function
 */
-
-var utils = {
-    format: function() {
-        var newArguments = [].slice.call(arguments, 1)
-        var args = newArguments;
-        var s = arguments[0]
-        return s.replace(/{(\d+)}/g, (match, number) => {
-            return typeof args[number] != 'undefined' ? args[number] : match;
-        });
-    },
-    redirect: function(url) {
-        window.location.assign(url);
-        chrome.tabs.query({
-            active: true,
-            currentWindow: true
-        }, function(tabs) {
-            chrome.tabs.update(tabs[0].id, {
-                url: url
-            });
-        });
-    }
-}
 
 var baseCommands = {
     "secs": {
@@ -204,7 +183,7 @@ function CommandSetLoader(commandSet, opts) {
             } else if (r.url) {
                 params.unshift(r.url)
                 return {
-                    url: utils.format.apply(null, params)
+                    url: utils.format(params)
                 };
             } else if (r.genSrc) {
                 try {
@@ -529,6 +508,7 @@ function doSearch(text) {
 }
 
 function setUpAutoComplete() {
+console.log("hi")
    var pv = completely(document.getElementById('container-search'));
    pv.options = [];
    pv.repaint(); 

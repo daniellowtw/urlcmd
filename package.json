@@ -7,8 +7,9 @@
     "example": "examples"
   },
   "scripts": {
-    "build": "babel js -d build",
-    "test": "node_modules/.bin/mocha --compilers js:babel-core/register",
+    "build": "babel js -d build && npm run copyfiles",
+    "copyfiles": "cp index.html build && cp -r thirdparty/* build && cp -r css build",
+    "test": "node_modules/.bin/mocha --compilers js:babel-core/register --plugin=[]",
     "clean": "rm -rf build"
   },
   "repository": {

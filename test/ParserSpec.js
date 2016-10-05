@@ -1,4 +1,5 @@
 import parseArgs from '../js/parser.js';
+import utils from '../js/util.js';
 
 let expect = require('chai').expect;
 
@@ -39,3 +40,11 @@ describe('parser', function () {
     expect(output).to.eql(expected);
   });
 });
+
+describe('utils', () => {
+  it('format-should-workd', () => {
+    var input = ["{0}-{1}", 'abc', 'def'];
+    var output = utils.format(input);
+    expect(output).to.equal('abc-def');
+  })
+})
