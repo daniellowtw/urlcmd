@@ -14,15 +14,22 @@ This allows importing of personal aliases, like a portable `.bashrc`. Bring your
 
 ## Examples
 
-The following assumes you've added the keyword `sb` for the search engine, and will type the commands in the omnibox.
+The following assumes you've added the keyword `url` for the search engine, and will type the commands in the omnibox.
 
-* `alias x http://xkcd.com` means typing `sb x` will redirect you to `http://xkcd.com`.
-* `alias gd https://godoc.org/?q={0}` means typing `sb gd atomic` would search for atomic in another search engine.
-* `import gcd examples/gcd.js` will import the `gcd` function so that typing `sb gcd 14 21` will print `7`.
+* `alias x http://xkcd.com` means typing `url x` will redirect you to `http://xkcd.com`.
+* `alias gd https://godoc.org/?q={0}` means typing `url gd atomic` would search for atomic in another search engine.
+* `import gcd examples/gcd.js` will import the `gcd` function so that typing `url gcd 14 21` will print `7`.
 * `alias x` will remove the alias `x`
 
 ## Installation
 
-Go to <https://daniellowtw.github.io/urlcmd> and click on `Install` at the top right.
+Webapp: Go to <https://daniellowtw.github.io/urlcmd> and click on `Install` at the top right.
+
+Chrome extension : <https://chrome.google.com/webstore/detail/urlcmd/eeinlddplcljmdnfbghaamjhbgolnbni> 
+Alt-G or prefix your command with `url` in the URL bar.
 
 ## Third party functions
+
+* Greatest common divisor `import gcd examples/gcd.js`
+* Random number generator `import rand examples/rand.js`
+* Binary <-> ascii `import bin examples/bin.js`
