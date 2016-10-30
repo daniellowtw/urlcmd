@@ -2,13 +2,18 @@
     "manifest_version": 2,
     "name": "urlcmd",
     "short_name": "urlcmd",
-    "description": "Command line in your url",
+    "description": "Productivity from your URL bar",
     "version": "0.3.0",
     "author": "D low",
     "homepage_url": "https://github.com/daniellowtw/urlcmd",
     "background": {
         "page" : "background.html",
         "persistent" : false
+    },
+    "icons": {
+        "16":"icon128.png",
+        "48":"icon128.png",
+        "128":"icon128.png"
     },
     "omnibox": { "keyword": "url" },
     "commands": {
