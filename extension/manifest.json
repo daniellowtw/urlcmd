@@ -3,7 +3,7 @@
     "name": "urlcmd",
     "short_name": "urlcmd",
     "description": "Command line in your url",
-    "version": "0.2.0",
+    "version": "0.3.0",
     "author": "D low",
     "homepage_url": "https://github.com/daniellowtw/urlcmd",
     "background": {
