@@ -1,0 +1,44 @@
+{
+  "name": "urlcmd",
+  "version": "1.0.0",
+  "description": "Url templating and more",
+  "main": "index.js",
+  "directories": {
+    "example": "examples"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/daniellowtw/urlcmd.git"
+  },
+  "keywords": [
+    "urlcmd",
+    "productivity"
+  ],
+  "author": "Daniel Low",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/daniellowtw/urlcmd/issues"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ],
+    "transform": {
+      "\\.(ts|tsx)$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+    },
+    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$"
+  },
+  "homepage": "https://github.com/daniellowtw/urlcmd#readme",
+  "devDependencies": {
+    "@types/chrome": "0.0.49",
+    "jest": "^21.2.1",
+    "ts-jest": "^21.1.2",
+    "ts-loader": "^2.3.7",
+    "typescript": "^2.5.3"
+  }
+}
