@@ -2,12 +2,13 @@ import React, { useEffect, useState, useRef } from 'react';
 import Tab = chrome.tabs.Tab;
 import Display from './Display';
 import { listAll, UICommand } from './loader';
-import { executeCmd, doSearch, doQuery } from './core';
+import { run, doSearch, doQuery } from './core';
 import { completely } from './completely/completely';
 import { importConfig } from './store';
+import { CommandResult } from './cmd';
 
 
-function setUpAutoComplete(el: HTMLDivElement, cb: () => void) {
+export function setUpAutoComplete(el: HTMLDivElement, cb: (r: CommandResult) => void) {
     var pv: any = completely(el);
     pv.options = [];
     pv.repaint();
@@ -34,7 +35,8 @@ function setUpAutoComplete(el: HTMLDivElement, cb: () => void) {
 
     // Trigger search when user enters
     pv.onEnter = function () {
-        doQuery(pv.input.value).then(cb);
+        const r = doQuery(pv.input.value)
+        cb(r);
         pv.setText('');
     }
 
@@ -47,14 +49,19 @@ const App = () => {
     const [uiCommands, setUiCommands] = useState<UICommand[]>(listAll())
     const searchRef = useRef<HTMLDivElement>()
     const [showImport, setShowImport] = useState(false)
+    const [result, setResult] = useState<CommandResult>()
 
     const updateState = () => {
         setUiCommands(listAll())
     }
 
     useEffect(() => {
-        executeCmd();
-        setUpAutoComplete(searchRef.current, updateState);
+        const r = run();
+        setResult(r)
+        setUpAutoComplete(searchRef.current, r => {
+            updateState()
+            setResult(r)
+        })
     }, [])
 
     return (<>
@@ -75,7 +82,11 @@ const App = () => {
                 </div>
                 <div ref={searchRef} id='container-search'></div>
                 <br />
-                <div id="content"></div>
+                <div id="content">
+                    {result && result.text && <pre>
+                    {result.text}
+                    </pre>}
+                </div>
                 <hr />
                 <div id="list-all-content"></div>
                 <div>

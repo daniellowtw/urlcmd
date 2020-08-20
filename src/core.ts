@@ -1,4 +1,4 @@
-import { makeList } from "./cmd";
+import { makeList, CommandResult, CommandSet } from "./cmd";
 import { splitArgs, applyLoader } from "./loader";
 import { getAliases } from "./store";
 
@@ -43,19 +43,19 @@ export function navigate(url) {
   );
 }
 
-export function doQuery(text: string): Promise<void> {
+export function doQuery(text: string): CommandResult {
     var query = text;
     if (query === "") {
         const el: HTMLInputElement = document.getElementById("query-text") as HTMLInputElement;
         query = el.value;
         el.value = "";
     }
-    window.location.href='index.html#' + query; // Will not trigger refresh
-    return executeCmd();
+    window.location.href='#' + query; // Will not trigger refresh
+    return run();
 }
 
 
-export function executeCmd(): Promise<void> {
+export function run(): CommandResult {
     var searchQuery = splitArgs(window.location).q;
     if (searchQuery) {
         document.title = searchQuery;
@@ -64,14 +64,16 @@ export function executeCmd(): Promise<void> {
           console.log(r)
             if (r.url) {
                 navigate(r.url);
-            } else if (r.text) {
-                console.log(r.text)
             }
+            return r
         } else {
-            console.log("not found")
+          return {
+            text: "Not found"
+          }
         }
     }
-    return Promise.resolve()
+    return {
+    }
 }
 
 export function doSearch(text) {

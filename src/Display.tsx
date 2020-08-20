@@ -7,11 +7,12 @@ const Display: React.FC<{ kvs: UICommand[] }> = ({ kvs }) => {
         <table className={"table is-bordered is-striped is-narrow is-hoverable"}>
             <tbody>
                 {kvs.map((kv: UICommand, idx: number) => {
+                    const desc = (typeof kv.cmdObject.desc === "string") ? [kv.cmdObject.desc] : kv.cmdObject.desc
+                    console.log(desc)
                     return <tr key={kv.cmd ?? idx}>
                         <td>{kv.cmd ?? "error"}</td>
                         <td style={kv.style ?? {}}>
-                            <p>{kv.cmdObject.target ?? ""}</p>
-                            <p>{kv.cmdObject.desc}</p>
+                            {desc.map(l => <p>{l}</p>)}
                             <p>{kv.cmdObject.example ?? ""}</p>
                         </td>
                     </tr>

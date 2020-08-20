@@ -7,7 +7,6 @@
     example - using it in action
     gen - execute the function
 */
-
 import { listAll } from "./loader";
 import { getAliases, setAliases } from "./store";
 
@@ -19,7 +18,7 @@ export interface Command {
     urlNoArgs?: string;
 
     cmd?: string;
-    desc: string;
+    desc: string| string[];
     usage?: string;
     example?: string;
     gen: (query: string, args: string[]) => CommandResult;
@@ -90,7 +89,7 @@ export const coreCommands: CommandSet = {
                         target: args[1].match(/^[a-zA-Z_\-$]+$/) ? args[1] : undefined, // points to another command
                         url: args[1].match(/^[a-zA-Z_\-$]+$/) ? undefined : args[1],
                         urlNoArgs: args[2],
-                        desc: "redirects: <i>" + args[1] +  "</i>" + (args[2] === undefined ? "" : "<br>Without args: <i>" + args[2] + "</i>"), 
+                        desc: [`redirects: ${args[1]}`, `${(args[2] === undefined ? "" : "\nWithout args: " + args[2])}`], 
                         gen: function(a, b){return {}}
                     };
                 }

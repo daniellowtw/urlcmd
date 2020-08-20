@@ -1,4 +1,4 @@
-import { CommandSet, CommandResult, Command, coreCommands } from "./cmd";
+import { CommandSet, CommandResult, Command, coreCommands, baseCommands } from "./cmd";
 import { format } from "./core";
 import { CSSProperties } from "react";
 import { getAliases } from "./store";
@@ -16,7 +16,7 @@ export interface UICommand {
 }
 
 // CommandSetLoader tries to execute the command in the command set that corresponds to the name
-export function CommandSetLoader(name: string, commandSet: CommandSet, opts: {listStyle?: CSSProperties}): CommandLoader {
+export function CommandSetLoader(name: string, commandSet: CommandSet, opts?: {listStyle?: CSSProperties}): CommandLoader {
   console.log(commandSet)
   return {
     name, 
@@ -130,7 +130,7 @@ const loaders: CommandLoader[] = [
   CommandSetLoader("core", coreCommands, {
     listStyle: {color: "navy"},
   }),
-  // CommandSetLoader(baseCommands),
+  CommandSetLoader("base", baseCommands),
   // FallbackLoader(coreCommands["help"])
 ];
 
@@ -160,7 +160,7 @@ export function listAll(): UICommand[] {
 }
 
 // splitArgs parses the query from the url. It converts ?q=foo%20bar%20car into {"q":"foo bar car"}
-export function splitArgs(loc): { [k: string]: string } {
+export function splitArgs(loc: Location): { [k: string]: string } {
   var hash = loc.hash.substr(1);
   hash = decodeURIComponent(hash);
   if (hash !== "") {

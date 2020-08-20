@@ -12,9 +12,8 @@
   },
   "browser_action": {
     "default_icon": "icon128.png",
-    "default_popup": "index.html"
+    "default_popup": "popup.html"
   },
-
   "icons": {
     "16": "rocket16.png",
     "48": "icon128.png",

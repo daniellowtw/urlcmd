@@ -9,7 +9,8 @@ module.exports = {
         // options: path.join(__dirname, srcDir + 'options.ts'),
         background: path.join(__dirname, srcDir + 'background.ts'),
         content_script: path.join(__dirname, srcDir + 'content_script.tsx'),
-        webapp: path.join(__dirname, srcDir + 'main.tsx')
+        webapp: path.join(__dirname, srcDir + 'main.tsx'),
+        popup: path.join(__dirname, srcDir, "popup", 'Popup.tsx')
     },
     output: {
         path: path.join(__dirname, '../dist/js'),
