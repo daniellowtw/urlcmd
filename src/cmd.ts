@@ -7,7 +7,7 @@
     example - using it in action
     gen - execute the function
 */
-import { listAll } from "./loader";
+import { listAll, applyLoader } from "./loader";
 import { getAliases, setAliases } from "./store";
 
 export type CommandSet = {[k: string]: Command}
@@ -80,6 +80,15 @@ export const baseCommands: {[k: string]: Command} = {
 };
 
 export const coreCommands: CommandSet = {
+    "debug": {
+        desc: "Print out the result",
+        gen: (q) => {
+            const res = applyLoader(q)
+            return {
+                text: JSON.stringify(res)
+            }
+        }
+    },
     "home": {
         desc: "Show this page",
         gen: () => ({url: "index.html"})

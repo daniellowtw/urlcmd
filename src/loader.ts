@@ -96,7 +96,6 @@ export function applyLoader(text: string): CommandResult {
   for (var i = 0; i < loaders.length; i++) {
     var r = loaders[i].gen(text);
     if (r) {
-      console.log("Found loader: " + loaders[i].name)
       return r;
     }
   }

@@ -11,7 +11,6 @@ export function getAliases(): CommandSet {
 }
 
 export function setAliases(aliases) {
-  console.log(aliases);
   localStorage.setItem(ALIASES_KEY, JSON.stringify(aliases));
 }
 

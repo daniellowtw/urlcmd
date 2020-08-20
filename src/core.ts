@@ -61,7 +61,6 @@ export function run(): CommandResult {
         document.title = searchQuery;
         var r = applyLoader(searchQuery);
         if (r) {
-          console.log(r)
             if (r.url) {
                 navigate(r.url);
             }

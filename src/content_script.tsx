@@ -2,8 +2,6 @@ import React from "react";
 import ReactDOM from 'react-dom';
 import Display from "./Display";
 
-console.log("transforming...")
-
 function toObject(s: string) {
   const res = {};
   s.split("\n").forEach((element) => {
@@ -24,7 +22,6 @@ function toArrayList(s: string) {
 }
 
 var x = document.body.textContent;
-console.log(x)
 const data = toArrayList(x)
 
 document.body.innerHTML = '';
