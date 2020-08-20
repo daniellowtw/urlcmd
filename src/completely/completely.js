@@ -9,7 +9,7 @@
  * - Remove some styling overwrites
  * - Tab completion stops at spaces
 **/  
-function completely(container, config) {
+export function completely(container, config) {
     config = config || {};
     config.fontSize =                       config.fontSize   || '16px';
     config.fontFamily =                     config.fontFamily || 'sans-serif';
