@@ -17,32 +17,31 @@ export interface UICommand {
 
 // CommandSetLoader tries to execute the command in the command set that corresponds to the name
 export function CommandSetLoader(name: string, commandSet: CommandSet, opts?: {listStyle?: CSSProperties}): CommandLoader {
-  console.log(commandSet)
   return {
     name, 
     gen: function (q) {
       const components = q.split(" ");
-      const cmd = components[0].toLowerCase();
+      const cmdName = components[0].toLowerCase();
       const args = q.substring(components[0].length + 1);
       const params = parseArgs(args);
-      const r = commandSet[cmd];
-      if (r && r.target) {
-        return applyLoader(r.target + " " + args);
+      const cmd = commandSet[cmdName];
+      if (cmd && cmd.target) {
+        return applyLoader(cmd.target + " " + args);
       }
-      if (!r) {
+      if (!cmd) {
         return null;
       }
-      if ((!args || !r.url) && r.urlNoArgs) {
+      if ((!args || !cmd.url) && cmd.urlNoArgs) {
         return {
-          url: r.urlNoArgs,
+          url: cmd.urlNoArgs,
         };
-      } else if (r.url) {
-        params.unshift(r.url);
+      } else if (cmd.url) {
+        params.unshift(cmd.url);
         return {
           url: format.apply(null, params),
         };
-      } else if (r.gen) {
-        return r.gen(args, params);
+      } else if (cmd.gen) {
+        return cmd.gen(args, params);
       }
       return null;
     },

@@ -4,16 +4,16 @@ import { UICommand } from './loader';
 const Display: React.FC<{ kvs: UICommand[] }> = ({ kvs }) => {
     return <div>
         <h2>Available commands</h2>
-        <table className={"table is-bordered is-striped is-narrow is-hoverable"}>
+        <table className={"table is-bordered is-striped is-hoverable"} width={"100%"}>
             <tbody>
                 {kvs.map((kv: UICommand, idx: number) => {
                     const desc = (typeof kv.cmdObject.desc === "string") ? [kv.cmdObject.desc] : kv.cmdObject.desc
-                    console.log(desc)
+                    const examples = (typeof kv.cmdObject.example === "string") ? [kv.cmdObject.example] : kv.cmdObject.example
                     return <tr key={kv.cmd ?? idx}>
                         <td>{kv.cmd ?? "error"}</td>
                         <td style={kv.style ?? {}}>
-                            {desc.map(l => <p>{l}</p>)}
-                            <p>{kv.cmdObject.example ?? ""}</p>
+                            {desc.map(l => <p key={l}>{l}</p>)}
+                            {examples && examples.map(l => <p key={l}>{l}</p>)}
                         </td>
                     </tr>
                 }

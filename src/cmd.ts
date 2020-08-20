@@ -20,7 +20,7 @@ export interface Command {
     cmd?: string;
     desc: string| string[];
     usage?: string;
-    example?: string;
+    example?: string| string[];
     gen: (query: string, args: string[]) => CommandResult;
 }
 
@@ -30,12 +30,26 @@ export interface CommandResult {
 }
 
 export const baseCommands: {[k: string]: Command} = {
+    "msecs": {
+        desc: "Unix timestamp conversion (milliseconds)",
+        gen: function(q) {
+            if (!q) {
+                return {
+                    text: "" + Math.floor(new Date().getTime())
+                };
+            } else {
+                return {
+                    text: "" + new Date(parseInt(q, 10))
+                }
+            }
+        }
+    },
     "secs": {
         desc: "Unix timestamp conversion",
         gen: function(q) {
             if (!q) {
                 return {
-                    text: "" + new Date().getTime() / 1000
+                    text: "" + Math.floor(new Date().getTime() / 1000)
                 };
             } else {
                 return {
@@ -66,6 +80,10 @@ export const baseCommands: {[k: string]: Command} = {
 };
 
 export const coreCommands: CommandSet = {
+    "home": {
+        desc: "Show this page",
+        gen: () => ({url: "index.html"})
+    },
     "help": {
         desc: "List available commands",
         gen: function() {
@@ -75,7 +93,7 @@ export const coreCommands: CommandSet = {
     },
     "alias": {
         desc: "Add or remove an alias",
-        example: "alias hn https://news.ycombinator.com\nalias foo http://{0}.{1}.com\n",
+        example: ["alias hn https://news.ycombinator.com", "alias foo http://{0}.{1}.com"],
         usage: "alias name target [target if no args]",
 
         gen: function(q, args) {
@@ -103,13 +121,13 @@ export const coreCommands: CommandSet = {
     },
     "rm": {
         desc: "Remove aliases",
-        example: "Usage: rm cmd1 cmd2 cmd3<br>",
+        example: "Usage: rm cmd1 cmd2 cmd3",
         gen: function(q, args) {
             const aliases = getAliases();
             args.forEach(x=> delete aliases[x]);
             setAliases(aliases);
             return {
-                text: "Usage: rm cmd1 cmd2 cmd3<br>"
+                text: "Usage: rm cmd1 cmd2 cmd3"
             };
         }
     },

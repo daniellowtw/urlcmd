@@ -84,14 +84,11 @@ const App = () => {
                 <br />
                 <div id="content">
                     {result && result.text && <pre>
-                    {result.text}
+                        {result.text}
                     </pre>}
                 </div>
                 <hr />
-                <div id="list-all-content"></div>
-                <div>
-                    <Display kvs={uiCommands} />
-                </div>
+                <Display kvs={uiCommands} />
             </div>
         </section>
         <button className="modal-close"></button>
