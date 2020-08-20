@@ -61,7 +61,7 @@ export const baseCommands: {[k: string]: Command} = {
     "tr": {
         desc: "Google Translate",
         usage: "tr [[from]:[to]] text",
-        example: "Example: tr ro:fr buna ziua",
+        example: ["Example: tr ro:fr buna ziua", "tr en:zh-CN hello world"],
         gen: function(q) {
             if (!q) {
                 return {
@@ -73,7 +73,7 @@ export const baseCommands: {[k: string]: Command} = {
             var to = components[3] || 'en';
             var text = components[4];
             return {
-                url: "https://translate.google.com/#" + from + "/" + to + "/" + text
+                url: `https://translate.google.com/#view=home&op=translate&sl=${from}&tl=${to}&text=${text}`
             };
         }
     },
