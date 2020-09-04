@@ -27,6 +27,20 @@ export function redirect(url: string) {
   );
 }
 
+export function createNewTab(url) {
+  // window.location.assign(url);
+  chrome.tabs.create(
+    {
+      active: true,
+      url, 
+    },
+    function (tabs) {
+      // chrome.tabs.update(tabs[0].id, {
+      //   url: url,
+      // });
+    }
+  );
+}
 // navigate redirects the browser to the given url
 export function navigate(url) {
   window.location.assign(url);
@@ -54,6 +68,9 @@ export function doQuery(text: string): CommandResult {
     return run();
 }
 
+export function runPure(query: string): CommandResult {
+        return applyLoader(query);
+}
 
 export function run(): CommandResult {
     var searchQuery = splitArgs(window.location).q;

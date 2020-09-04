@@ -2,13 +2,24 @@ import React, { useEffect, useState, useRef } from 'react';
 import Tab = chrome.tabs.Tab;
 import Display from './Display';
 import { listAll, UICommand } from './loader';
-import { run, doSearch, doQuery } from './core';
+import { run, doSearch, doQuery, runPure, navigate, createNewTab } from './core';
 import { completely } from './completely/completely';
 import { importConfig } from './store';
 import { CommandResult } from './cmd';
 
+function setHistory(value) {
+    console.log("setting history")
+        chrome.storage.sync.get(['history'], function (x: {history: string[]}) {
+            console.log("store is ", x)
+            x.history.push(value)
+            chrome.storage.sync.set({history: x.history}, function() {
+                console.log("updated")
+            })
+        })
+}
 
-export function setUpAutoComplete(el: HTMLDivElement, cb: (r: CommandResult) => void) {
+
+export function setUpAutoComplete(el: HTMLDivElement, cb: (r: CommandResult) => void, isPopUp?: boolean) {
     var pv: any = completely(el);
     pv.options = [];
     pv.repaint();
@@ -19,7 +30,7 @@ export function setUpAutoComplete(el: HTMLDivElement, cb: (r: CommandResult) => 
             pv.repaint();
             return;
         }
-        var oj = doSearch(text);
+        const oj = doSearch(text);
         pv.options = [];
         for (var i in oj) { pv.options.push(oj[i].usage || oj[i].name); }
         pv.repaint();
@@ -34,8 +45,13 @@ export function setUpAutoComplete(el: HTMLDivElement, cb: (r: CommandResult) => 
     pv.wrapper.className = "control has-addons"
 
     // Trigger search when user enters
-    pv.onEnter = function () {
-        const r = doQuery(pv.input.value)
+    pv.onEnter = async function () {
+        // const r = doQuery(pv.input.value)
+        const r = runPure(pv.input.value)
+        setHistory(pv.input.value)
+        if (r && r.url) {
+            createNewTab(r.url)
+        }
         cb(r);
         pv.setText('');
     }

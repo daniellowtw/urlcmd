@@ -3,7 +3,8 @@
   "name": "urlcmd",
   "short_name": "urlcmd",
   "description": "Productivity from your URL bar",
-  "version": "0.5.1",
+  "version": "0.5.3",
+  "permissions": ["storage"],
   "author": "D low",
   "homepage_url": "https://github.com/daniellowtw/urlcmd",
   "background": {

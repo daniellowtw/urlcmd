@@ -79,6 +79,20 @@ export const baseCommands: {[k: string]: Command} = {
     },
 };
 
+export function getHistory(): Promise<string[]> {
+    console.log("getting history")
+    return new Promise(r => {
+    try {
+        chrome.storage.sync.get(['history'], function (x) {
+            r(x.history || [])
+        })
+    } catch (ex) {
+        r([])
+    }
+
+    })
+}
+
 export const coreCommands: CommandSet = {
     "debug": {
         desc: "Print out the result",
@@ -96,8 +110,9 @@ export const coreCommands: CommandSet = {
     "help": {
         desc: "List available commands",
         gen: function() {
-            listAll();
-            return {}
+            const res = listAll();
+            return {text: JSON.stringify(res.map(c => {return {
+                "cmd": c.cmd, "desc": c.cmdObject.desc}}), null, 2)}
         }
     },
     "alias": {

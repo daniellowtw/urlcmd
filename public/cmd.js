@@ -19,19 +19,31 @@ function parseUserInput(text) {
     return res || []
 }
 
-function setHistory(sbHistory) {
+function setHistory(value) {
     console.log("setting history")
-    localStorage.setItem(HISTORY_KEY, JSON.stringify(sbHistory));
+        chrome.storage.sync.get(['history'], function (x) {
+            x.push(value)
+            chrome.storage.sync.set({history: x}, function() {
+                console.log("updated")
+            })
+        })
 }
 
 function getHistory() {
     console.log("getting history")
     try {
-        return JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+        chrome.storage.sync.get(['history'], function (x) {
+        return x || []
+        })
     } catch (ex) {
         return [];
     }
 }
+
+chrome.runtime.onInstalled.addListener(function() {
+  chrome.storage.sync.set({history: []}, function() {
+  });
+});
 
 // This is triggered when the input changes
 chrome.omnibox.onInputChanged.addListener(
