@@ -4,20 +4,8 @@ import Display from './Display';
 import { listAll, UICommand } from './loader';
 import { run, doSearch, doQuery, runPure, navigate, createNewTab } from './core';
 import { completely } from './completely/completely';
-import { importConfig } from './store';
+import { importConfig, setHistory } from './store';
 import { CommandResult } from './cmd';
-
-function setHistory(value) {
-    console.log("setting history")
-        chrome.storage.sync.get(['history'], function (x: {history: string[]}) {
-            console.log("store is ", x)
-            x.history.push(value)
-            chrome.storage.sync.set({history: x.history}, function() {
-                console.log("updated")
-            })
-        })
-}
-
 
 export function setUpAutoComplete(el: HTMLDivElement, cb: (r: CommandResult) => void, isPopUp?: boolean) {
     var pv: any = completely(el);
@@ -66,6 +54,7 @@ const App = () => {
     const searchRef = useRef<HTMLDivElement>()
     const [showImport, setShowImport] = useState(false)
     const [result, setResult] = useState<CommandResult>()
+    const [text, setText] = useState("")
 
     const updateState = () => {
         setUiCommands(listAll())
@@ -77,6 +66,7 @@ const App = () => {
         setUpAutoComplete(searchRef.current, r => {
             updateState()
             setResult(r)
+            r.textAsync?.then(setText)
         })
     }, [])
 
@@ -101,6 +91,9 @@ const App = () => {
                 <div id="content">
                     {result && result.text && <pre>
                         {result.text}
+                    </pre>}
+                    {text && <pre>
+                        {text}
                     </pre>}
                 </div>
                 <hr />

@@ -1,14 +1,15 @@
 import React, { useEffect, useState, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import { listAll, UICommand } from '../loader';
-import { CommandResult, getHistory } from '../cmd';
+import { CommandResult } from '../cmd';
 import { setUpAutoComplete } from '../App';
+import { setHistory, getHistory } from '../store';
 
 const App = () => {
     const [uiCommands, setUiCommands] = useState<UICommand[]>(listAll())
     const searchRef = useRef<HTMLDivElement>()
     const [result, setResult] = useState<CommandResult>()
-    const [history, setHistory] = useState<Array<string>>([])
+    const [history, setCommandHistory] = useState<Array<string>>([])
 
     const updateState = () => {
         setUiCommands(listAll())
@@ -20,7 +21,7 @@ const App = () => {
             setResult(r)
             getHistory().then(x => {
                 console.log(x)
-                setHistory(x)
+                setCommandHistory(x)
             })
         })
     }, [])

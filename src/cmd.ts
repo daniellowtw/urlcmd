@@ -8,7 +8,7 @@
     gen - execute the function
 */
 import { listAll, applyLoader } from "./loader";
-import { getAliases, setAliases } from "./store";
+import { getAliases, setAliases, getHistory } from "./store";
 
 export type CommandSet = {[k: string]: Command}
 
@@ -26,6 +26,7 @@ export interface Command {
 
 export interface CommandResult {
     text?: string;
+    textAsync?: Promise<string>;
     url?: string;
 }
 
@@ -79,19 +80,6 @@ export const baseCommands: {[k: string]: Command} = {
     },
 };
 
-export function getHistory(): Promise<string[]> {
-    console.log("getting history")
-    return new Promise(r => {
-    try {
-        chrome.storage.sync.get(['history'], function (x) {
-            r(x.history || [])
-        })
-    } catch (ex) {
-        r([])
-    }
-
-    })
-}
 
 export const coreCommands: CommandSet = {
     "debug": {
@@ -106,6 +94,12 @@ export const coreCommands: CommandSet = {
     "home": {
         desc: "Show this page",
         gen: () => ({url: "index.html"})
+    },
+    "hist": {
+        desc: "Show history",
+        gen: () => ({textAsync: new Promise(resolve => {
+            getHistory().then(r => resolve(JSON.stringify(r)))
+        })})
     },
     "help": {
         desc: "List available commands",

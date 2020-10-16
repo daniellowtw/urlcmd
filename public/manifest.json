@@ -8,7 +8,7 @@
   "author": "D low",
   "homepage_url": "https://github.com/daniellowtw/urlcmd",
   "background": {
-    "page": "background.html",
+    "scripts": ["js/bg.js"],
     "persistent": false
   },
   "browser_action": {
