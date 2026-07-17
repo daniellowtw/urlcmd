@@ -118,6 +118,29 @@ var coreCommands = {
             };
         }
     },
+    "mv": {
+        desc: "Rename an alias",
+        usage: "mv oldname newname",
+        example: "mv hn news<br>",
+        gen: function(q, args) {
+            if (args.length != 2) {
+                return { text: "Usage: mv oldname newname" };
+            }
+            var from = args[0];
+            var to = args[1];
+            if (from === to) {
+                return { text: "Nothing to do: names are the same" };
+            }
+            aliases = getAliases();
+            if (!aliases[from]) {
+                return { text: "No such alias: " + from };
+            }
+            aliases[to] = aliases[from];
+            delete aliases[from];
+            setAliases(aliases);
+            return { text: "Renamed " + from + " to " + to };
+        }
+    },
     "import": {
         "desc": "Import a single command from a url",
         "example": "import bar foo.js",
