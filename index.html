@@ -30,7 +30,91 @@
         padding: 2px;
         border-radius: 2px;
     }
-    </style>
+
+    /* Header as a single horizontal bar with a clear action hierarchy. */
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+    .header-right {
+        display: flex;
+        align-items: center;
+        gap: .5rem;
+        flex-wrap: wrap;
+    }
+    .header-item { margin: 0; }
+    /* Reset is destructive: keep it quiet and set apart from the setup actions. */
+    .reset-link {
+        color: #b5b5b5;
+        text-decoration: none;
+        margin-left: .5rem;
+    }
+    .reset-link:hover { color: #cc0f35; }
+
+    /* The command input is the hero: a terminal-style bar with a prompt glyph. */
+    .command-bar {
+        display: flex;
+        align-items: center;
+        background: #fff;
+        border: 1px solid #dbdbdb;
+        border-radius: 8px;
+        padding-left: 1rem;
+        transition: border-color .15s ease, box-shadow .15s ease;
+    }
+    .command-bar:focus-within {
+        border-color: #485fc7;
+        box-shadow: 0 0 0 0.125em rgba(72, 95, 199, .25);
+    }
+    .command-prompt {
+        font-family: Monaco, Menlo, monospace;
+        font-size: 1.5rem;
+        line-height: 1;
+        color: #b5b5b5;
+        user-select: none;
+        padding-right: .25rem;
+    }
+    #container-search {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+    #container-search .input {
+        font-family: Monaco, Menlo, monospace;
+        font-size: 1.5rem;
+        height: 3.5rem;
+        border: none;
+        background: transparent;
+        box-shadow: none;
+        padding-left: .5rem;
+    }
+    #container-search .input:focus { box-shadow: none; }
+
+    /* First-run guidance shown when there is no active command. */
+    #content { margin-top: 1.5rem; }
+    #list-all-content { margin-top: 1.5rem; }
+    .first-run {
+        background: #f5f7fb;
+        border: 1px solid #e6eaf3;
+        border-radius: 8px;
+        padding: 1.25rem 1.5rem;
+    }
+    .first-run .fr-lead {
+        font-size: 1.15rem;
+        font-weight: 600;
+        margin-bottom: .25rem;
+    }
+    .first-run .fr-sub { color: #7a7a7a; margin-bottom: .75rem; }
+    .first-run .fr-run,
+    .first-run .fr-fill { font-family: Monaco, Menlo, monospace; }
+    .first-run .fr-note {
+        margin-top: .75rem;
+        color: #7a7a7a;
+        font-size: .9rem;
+    }
+</style>
 </head>
 
 <body>
@@ -48,16 +132,16 @@
                 </div>
                 <!-- Right side -->
                 <div class="header-right">
-                    <p class="header-item"><a class="button is-info" id="extOpen">Extensions</a></p>
-                    <p class="header-item"><a class="button is-success" id="loadOpen">Load config</a></p>
-                    <p class="header-item"><a class="button is-danger" id="resetBtn">Reset</a></p>
-                    <p class="header-item"><a class="button is-success" id="helpOpen">Install</a></p>
+                    <p class="header-item"><a class="button is-primary" id="helpOpen">Install</a></p>
+                    <p class="header-item"><a class="button is-light" id="extOpen">Extensions</a></p>
+                    <p class="header-item"><a class="button is-light" id="loadOpen">Load config</a></p>
+                    <p class="header-item"><a class="button is-small is-white reset-link" id="resetBtn">Reset</a></p>
                 </div>
             </div>
-            <p>
+            <div class="command-bar">
+                <span class="command-prompt">&rsaquo;</span>
                 <div id='container-search'></div>
-            </p>
-            <br>
+            </div>
             <div id="content"></div>
             <div id="list-all-content"></div>
         </div>

@@ -13,6 +13,10 @@ var aliases: { [name: string]: any };
 
 var ALIASES_KEY = "sb";
 
+// The live autocomplete widget, set up in setUpAutoComplete. Held here so the
+// first-run starters can prefill the input.
+var searchWidget: any = null;
+
 /*
     A command has the following properties
 
@@ -689,7 +693,6 @@ function displayEntries(result, opts?) {
     }
 
     res += "</table><br/>";
-    res += "General usage is: <tt>cmd [query]</tt>";
     return res
 }
 
@@ -721,8 +724,46 @@ function executeCmd() {
         }
         listAll(r && r.listAll)
     } else {
+        renderFirstRun();
         listAll()
     }
+}
+
+// renderFirstRun turns the empty landing into an obvious next action: a short
+// line on how to use it plus clickable starters. `fr-run` starters execute
+// immediately; `fr-fill` starters prefill the input so the syntax can be edited
+// before running.
+function renderFirstRun() {
+    var html =
+        '<div class="first-run">'
+        + '<p class="fr-lead">Type a command and press Enter.</p>'
+        + '<p class="fr-sub">New here? Try one of these:</p>'
+        + '<div class="buttons">'
+        + '<button class="button is-small fr-run" data-cmd="help">help</button>'
+        + '<button class="button is-small fr-run" data-cmd="hist">hist</button>'
+        + '<button class="button is-small fr-fill" data-cmd="alias g https://google.com">alias g https://google.com</button>'
+        + '</div>'
+        + '<p class="fr-note">Want it in your URL bar? Use <strong>Install</strong> above to add it as a search engine.</p>'
+        + '</div>';
+    // executeCmd can run before the DOM is ready on first load, so defer if the
+    // target isn't there yet.
+    var el = document.getElementById('content');
+    if (!el) {
+        document.addEventListener("DOMContentLoaded", renderFirstRun);
+        return;
+    }
+    el.innerHTML = html;
+    Array.prototype.forEach.call(el.querySelectorAll('.fr-run'), (btn: any) => {
+        btn.onclick = () => doQuery(btn.getAttribute('data-cmd'));
+    });
+    Array.prototype.forEach.call(el.querySelectorAll('.fr-fill'), (btn: any) => {
+        btn.onclick = () => {
+            if (searchWidget) {
+                searchWidget.setText(btn.getAttribute('data-cmd'));
+                searchWidget.input.focus();
+            }
+        };
+    });
 }
 
 function makeList(obj) {
@@ -759,6 +800,7 @@ function doSearch(text) {
 
 function setUpAutoComplete() {
    var pv = completely(document.getElementById('container-search'));
+   searchWidget = pv;
    pv.options = [];
    pv.repaint();
 
@@ -815,7 +857,7 @@ function setUpAutoComplete() {
 
     // Hacks to fix stying of the generated elements
     pv.input.className="input"
-    pv.input.placeholder="Command. Try 'help'"
+    pv.input.placeholder="Type a command…"
     pv.hint.className="input"
     pv.prompt.className="input"
     pv.wrapper.className="control has-addons"
