@@ -4,6 +4,8 @@
 declare const System: { import(url: string): Promise<any> };
 declare function completely(el: HTMLElement | null): any;
 
+import { parseArgs } from "./parseArgs";
+
 // Legacy shared global. Several commands assign to `aliases` without declaring
 // it; that worked in the old sloppy-mode script but throws under the "use
 // strict" that the compiler emits, so declare it for real (emits `var aliases`).
@@ -240,33 +242,6 @@ function setHistory(value) {
     localStorage.setItem(HISTORY_KEY, JSON.stringify(hist));
 }
 
-function parseArgs(s) {
-    if (s.indexOf('"') == -1) {
-        return s.split(" ");
-    }
-    var spaceSeparatedList = s.split(" ");
-    var res = [];
-    var currIndex = 0;
-    while (currIndex < spaceSeparatedList.length) {
-        var currWord = spaceSeparatedList[currIndex];
-        currIndex++;
-        if (currWord[0] == '"') {
-            currWord = currWord.substr(1);
-            // Gather following words until we reach the one ending in a quote.
-            while (currWord[currWord.length - 1] != '"'
-                && currIndex < spaceSeparatedList.length) {
-                currWord += ` ${spaceSeparatedList[currIndex]}`;
-                currIndex++;
-            }
-            // Strip the trailing closing quote if it was found.
-            if (currWord[currWord.length - 1] == '"') {
-                currWord = currWord.substring(0, currWord.length - 1);
-            }
-        }
-        res.push(currWord);
-    }
-    return res;
-}
 
 // CommandSetLoader tries to execute the command in the command set that corresponds to the name
 function CommandSetLoader(commandSet, opts?) {
