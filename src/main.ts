@@ -425,14 +425,17 @@ function listAll() {
     }
 }
 
-// Writes the given content into the correct div
+// Writes the given content into the correct div. Non-empty output is wrapped in
+// a Bulma box so a command's response reads as a distinct card, set apart from
+// the always-on command list below it. Empty content clears the div (no box).
 function displayContent(content) {
+    var html = content ? '<div class="box">' + content + '</div>' : '';
     // If updating fails because dom is not loaded, then wait for it to load.
     try {
-        document.getElementById('content').innerHTML = content;
+        document.getElementById('content').innerHTML = html;
     } catch (e) {
         document.addEventListener("DOMContentLoaded", function(event) {
-            document.getElementById('content').innerHTML = content;
+            document.getElementById('content').innerHTML = html;
         });
     }
 }
@@ -729,13 +732,51 @@ function doSearch(text) {
 function setUpAutoComplete() {
    var pv = completely(document.getElementById('container-search'));
    pv.options = [];
-   pv.repaint(); 
+   pv.repaint();
+
+    // Shell-style history recall. histIndex == -1 means "not navigating"
+    // (the live input); 0 is the most recent command. histNavValue is the
+    // exact text we last injected, so onChange can tell our own injection
+    // apart from the user typing a real character.
+    var histIndex = -1;
+    var histNavValue = null;
+
+    pv.onArrowUp = function () {
+        var hist = getHistory();
+        if (!hist.length) { return; }
+        histIndex = Math.min(histIndex + 1, hist.length - 1);
+        histNavValue = hist[histIndex];
+        pv.setText(histNavValue);
+    };
+
+    pv.onArrowDown = function () {
+        if (histIndex <= 0) {
+            // Stepped past the newest entry: back to an empty live input.
+            histIndex = -1;
+            histNavValue = "";
+            pv.setText("");
+            return;
+        }
+        var hist = getHistory();
+        histIndex -= 1;
+        histNavValue = hist[histIndex];
+        pv.setText(histNavValue);
+    };
 
     pv.onChange = function (text) {
+        if (text === histNavValue) {
+            // We injected this while walking history; keep the dropdown empty
+            // so a further Up/Down keeps walking history instead of navigating
+            // a freshly-populated suggestion list.
+            pv.options = [];
+            pv.repaint();
+            return;
+        }
+        histIndex = -1; // user edited the text: leave history navigation.
         if (text.length == 0) {
             pv.options = [];
             pv.repaint();
-            return; 
+            return;
         }
         var oj = doSearch(text);
         pv.options =[];
@@ -755,6 +796,8 @@ function setUpAutoComplete() {
     pv.onEnter = function(){
         doQuery(pv.input.value);
         pv.setText('');
+        histIndex = -1;
+        histNavValue = "";
     }
 
    setTimeout(function() {
