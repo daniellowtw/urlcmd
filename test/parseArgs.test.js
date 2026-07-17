@@ -1,9 +1,9 @@
-// Tests for parseArgs in js/main.js
-// Run with: bun test
+// Tests for parseArgs, defined in src/main.ts (compiled to js/main.js).
+// Run with: bun test  (build first, or use `just test`).
 //
-// We can't `import` main.js because it executes browser-only bootstrap code at
-// load time. Instead we extract the parseArgs function source from the file and
-// eval it, so these tests exercise the real implementation.
+// We can't `import` the module because it executes browser-only bootstrap code
+// at load time. Instead we extract the parseArgs function source from the
+// compiled output and eval it, so these tests exercise the real shipped code.
 
 import { test, expect } from "bun:test";
 import { readFileSync } from "fs";
