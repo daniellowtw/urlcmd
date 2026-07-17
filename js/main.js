@@ -49,6 +49,21 @@ var baseCommands = {
             }
         }
     },
+    "msecs": {
+        desc: "Unix timestamp conversion (milliseconds)",
+        gen: function (q) {
+            if (!q) {
+                return {
+                    text: Math.floor(new Date().getTime())
+                };
+            }
+            else {
+                return {
+                    text: new Date(parseInt(q, 10))
+                };
+            }
+        }
+    },
     "tr": {
         desc: "Google Translate",
         usage: "tr [[from]:[to]] text",
@@ -64,7 +79,7 @@ var baseCommands = {
             var to = components[3] || 'en';
             var text = components[4];
             return {
-                url: "https://translate.google.com/#" + from + "/" + to + "/" + text
+                url: "https://translate.google.com/#view=home&op=translate&sl=" + from + "&tl=" + to + "&text=" + encodeURIComponent(text)
             };
         }
     },
@@ -84,6 +99,25 @@ var coreCommands = {
         gen: function (_unused) {
             listAll();
             return true;
+        }
+    },
+    "debug": {
+        desc: "Print out the resolved result for a query",
+        example: "debug tr en:fr hello",
+        gen: function (q) {
+            return {
+                text: "<pre>" + JSON.stringify(applyLoader(q), null, 2) + "</pre>"
+            };
+        }
+    },
+    "hist": {
+        desc: "Show recent command history",
+        gen: function () {
+            var hist = getHistory();
+            if (!hist.length) {
+                return { text: "No history yet" };
+            }
+            return { text: "<pre>" + hist.join("\n") + "</pre>" };
         }
     },
     "alias": {
@@ -173,6 +207,26 @@ function getAliases() {
     catch (ex) {
         return {};
     }
+}
+var HISTORY_KEY = "urlcmd_history";
+function getHistory() {
+    try {
+        return JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+    }
+    catch (ex) {
+        return [];
+    }
+}
+function setHistory(value) {
+    if (!value) {
+        return;
+    }
+    var hist = getHistory();
+    hist.unshift(value);
+    if (hist.length > 15) {
+        hist = hist.slice(0, 15);
+    }
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(hist));
 }
 function parseArgs(s) {
     if (s.indexOf('"') == -1) {
@@ -477,6 +531,7 @@ function doQuery(text) {
         query = el.value;
         el.value = "";
     }
+    setHistory(query);
     window.location.href = 'index.html#' + query; // Will not trigger refresh
     executeCmd();
 }
