@@ -425,17 +425,33 @@ function listAll() {
     }
 }
 
+// renderContent writes the box HTML into #content and wires the Copy button.
+// The button copies the box's plaintext (innerText unwraps <pre> and drops
+// tags), which is the useful form for debug/hist/export output.
+function renderContent(el, content) {
+    el.innerHTML = content
+        ? '<div class="box"><button class="button is-small is-pulled-right copy-btn">Copy</button>'
+            + '<div class="copy-src">' + content + '</div></div>'
+        : '';
+    var btn = el.querySelector('.copy-btn');
+    if (btn) {
+        btn.onclick = () => {
+            navigator.clipboard.writeText(el.querySelector('.copy-src').innerText)
+                .then(() => { btn.textContent = "Copied ✓"; });
+        };
+    }
+}
+
 // Writes the given content into the correct div. Non-empty output is wrapped in
 // a Bulma box so a command's response reads as a distinct card, set apart from
 // the always-on command list below it. Empty content clears the div (no box).
 function displayContent(content) {
-    var html = content ? '<div class="box">' + content + '</div>' : '';
     // If updating fails because dom is not loaded, then wait for it to load.
     try {
-        document.getElementById('content').innerHTML = html;
+        renderContent(document.getElementById('content'), content);
     } catch (e) {
         document.addEventListener("DOMContentLoaded", function(event) {
-            document.getElementById('content').innerHTML = html;
+            renderContent(document.getElementById('content'), content);
         });
     }
 }
