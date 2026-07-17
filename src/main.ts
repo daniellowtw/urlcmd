@@ -42,6 +42,7 @@ var baseCommands = {
     "notepad" : {
         desc: "create a scratch pad",
         usage: "notepad",
+        hidden: true,
         gen: function() {
             // Chrome blocks top-frame navigation to data: URLs, so serve the
             // same HTML from a blob URL, which is allowed.
@@ -57,13 +58,15 @@ var coreCommands = {
     "help": {
         desc: "List available commands",
         gen: function(_unused) {
-            listAll();
-            return true;
+            // The listAll happens in executeCmd; the `listAll` flag asks it to
+            // include hidden commands so `help` reveals the full set.
+            return { listAll: true };
         }
     },
     "debug": {
         desc: "Print out the resolved result for a query",
         example: "debug tr en:fr hello",
+        hidden: true,
         gen: function(q) {
             return {
                 text: "<pre>" + JSON.stringify(applyLoader(q), null, 2) + "</pre>"
@@ -122,6 +125,7 @@ var coreCommands = {
         desc: "Rename an alias",
         usage: "mv oldname newname",
         example: "mv hn news<br>",
+        hidden: true,
         gen: function(q, args) {
             if (args.length != 2) {
                 return { text: "Usage: mv oldname newname" };
@@ -144,6 +148,7 @@ var coreCommands = {
     "import": {
         "desc": "Import a single command from a url",
         "example": "import bar foo.js",
+        hidden: true,
         gen: function(q, args) {
             if (args.length != 2) {
                 return {
@@ -173,6 +178,7 @@ var coreCommands = {
     "import-all": {
         "desc": "Import every command from a bundle url",
         "example": "import-all x/timestamp.js",
+        hidden: true,
         gen: function(q, args) {
             if (args.length != 1) {
                 return {
@@ -208,6 +214,7 @@ var coreCommands = {
     "export": {
         "desc": "Output the current aliases for sharing",
         "usage": "export",
+        "hidden": true,
         "gen": function(q, args) {
             return {
                 "text": "<textarea class='textarea config-textarea' placeholder='Config string' rows=20>"+localStorage.getItem(ALIASES_KEY)+"</textarea>"
@@ -335,7 +342,8 @@ function FallbackLoader(r) {
                     url: r.url.replace("%s", encodeURIComponent(q))
                 }
             }
-            listAll();
+            // Unknown command: fall through to executeCmd's default (minimal)
+            // list. Only `help` reveals the hidden commands.
             return true;
         }
     };
@@ -395,7 +403,7 @@ function splitArgs(loc): { [key: string]: string } {
 }
 
 
-function listAll() {
+function listAll(showHidden?) {
     var result = [];
     var seen = {};
     // hacks to make sure we load latest aliases
@@ -417,10 +425,10 @@ function listAll() {
 
     // If updating fails because dom is not loaded, then wait for it to load.
     try {
-        document.getElementById('list-all-content').innerHTML = displayEntries(result);
+        document.getElementById('list-all-content').innerHTML = displayEntries(result, { showHidden: showHidden });
     } catch (e) {
         document.addEventListener("DOMContentLoaded", function(event) {
-            document.getElementById('list-all-content').innerHTML = displayEntries(result);
+            document.getElementById('list-all-content').innerHTML = displayEntries(result, { showHidden: showHidden });
         });
     }
 }
@@ -665,6 +673,10 @@ function displayEntries(result, opts?) {
     res += '<table class="table is-bordered is-striped is-narrow">';
 
     for (var i = 0; i < result.length; i++) {
+        // Hidden commands are only listed when help asks for the full set.
+        if (!opts.showHidden && result[i].cmdObject && result[i].cmdObject.hidden) {
+            continue;
+        }
         var styleDesc = result[i].style ? 'style="' + result[i].style + '"' : "";
         res += "<tr><td " + styleDesc + ">" + result[i].cmd + "&nbsp;</td>";
         var cmdObject = result[i].cmdObject;
@@ -707,7 +719,7 @@ function executeCmd() {
                 displayContent(r.text);
             }
         }
-        listAll()
+        listAll(r && r.listAll)
     } else {
         listAll()
     }
