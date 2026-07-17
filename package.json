@@ -8,9 +8,9 @@
     "bun": ">=1.0.0"
   },
   "scripts": {
-    "build": "tsc",
-    "check": "tsc --noEmit",
-    "test": "tsc && bun test"
+    "build": "tsc && bun build ./src/main.ts --minify --format iife --outfile js/main.js",
+    "check": "tsc",
+    "test": "bun run build && bun test"
   },
   "devDependencies": {
     "typescript": "7.0.2"

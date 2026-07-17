@@ -2,13 +2,14 @@
 default:
     @just --list
 
-# Type-check and compile src/*.ts -> js/main.js
+# Type-check and compile+minify src/main.ts -> js/main.js
 build:
     bun x tsc
+    bun build ./src/main.ts --minify --format iife --outfile js/main.js
 
 # Type-check only (no output)
 check:
-    bun x tsc --noEmit
+    bun x tsc
 
 # Build, then run the unit tests against the compiled output
 test: build
