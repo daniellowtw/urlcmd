@@ -1,7 +1,6 @@
 // Ambient globals provided by other scripts / the browser environment.
 // `declare` statements are types only and emit no JavaScript, so the compiled
 // output stays a plain classic script that index.html can load directly.
-declare const chrome: any;
 declare const System: { import(url: string): Promise<any> };
 declare function completely(el: HTMLElement | null): any;
 
@@ -34,14 +33,6 @@ var utils = {
     },
     redirect: function(url) {
         window.location.assign(url);
-        chrome.tabs.query({
-            active: true,
-            currentWindow: true
-        }, function(tabs) {
-            chrome.tabs.update(tabs[0].id, {
-                url: url
-            });
-        });
     }
 }
 
@@ -383,14 +374,6 @@ function applyLoader(text) {
 // navigate redirects the browser to the given url
 function navigate(url) {
     window.location.assign(url);
-    chrome.tabs.query({
-        active: true,
-        currentWindow: true
-    }, function(tabs) {
-        chrome.tabs.update(tabs[0].id, {
-            url: url
-        });
-    });
 }
 
 // splitArgs parses the query from the url. It converts ?q=foo%20bar%20car into {"q":"foo bar car"}

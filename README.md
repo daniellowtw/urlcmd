@@ -23,10 +23,10 @@ The following assumes you've added the keyword `url` for the search engine, and 
 
 ## Installation
 
-Webapp: Go to <https://daniellowtw.github.io/urlcmd> and click on `Install` at the top right.
-
-Chrome extension : <https://chrome.google.com/webstore/detail/urlcmd/eeinlddplcljmdnfbghaamjhbgolnbni> 
-Alt-G or prefix your command with `url` in the URL bar.
+Go to <https://daniellowtw.github.io/urlcmd> and add it as a custom search engine
+(e.g. `chrome://settings/searchEngines`), or click `Install` at the top right to
+add it via OpenSearch. Pick a keyword such as `url`, then type `url <command>` in
+the address bar.
 
 ## Third party functions
 

@@ -17,8 +17,3 @@ test: build
 # Build, then serve the app locally at http://localhost:8000
 serve: build
     python3 -m http.server 8000
-
-# Build the browser extension bundle
-extension: build
-    cp -r css examples js index.html extension
-    zip -r extension.zip extension
