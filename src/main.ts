@@ -420,6 +420,7 @@ if (supports_html5_storage()) {
     document.addEventListener("DOMContentLoaded", function(event) {
         setUpHelp();
         setUpLoad();
+        setUpReset();
         setUpAutoComplete();
     });
 
@@ -481,6 +482,17 @@ function setUpLoad() {
     (loadEl.lastElementChild as HTMLElement).onclick = () => {
         loadEl.className = currentClass;
     }
+}
+
+// setUpReset wires the reset button to clear all saved aliases after a confirm.
+function setUpReset() {
+    document.getElementById('resetBtn').onclick = () => {
+        if (confirm("Reset config? This removes all your saved aliases.")) {
+            localStorage.removeItem(ALIASES_KEY);
+            displayContent("reset");
+            listAll();
+        }
+    };
 }
 
 // displayEntries takes a result and returns a html string for representing the result in a table
