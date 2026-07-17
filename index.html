@@ -48,6 +48,7 @@
                 </div>
                 <!-- Right side -->
                 <div class="header-right">
+                    <p class="header-item"><a class="button is-info" id="extOpen">Extensions</a></p>
                     <p class="header-item"><a class="button is-success" id="loadOpen">Load config</a></p>
                     <p class="header-item"><a class="button is-danger" id="resetBtn">Reset</a></p>
                     <p class="header-item"><a class="button is-success" id="helpOpen">Install</a></p>
@@ -109,6 +110,19 @@
                 <button class="button is-primary" id="submitLoadBtn">Submit</button>
                 <button class="button is-link" id="cancelLoadBtn">Cancel</button>
             </p>
+            </div>
+        </div>
+    </div>
+    <button class="modal-close"></button>
+</div>
+
+<div class="modal" id='ext'>
+    <div class="modal-background"></div>
+    <div class="modal-content">
+        <div class="box">
+            <div class="content">
+                <label class="label">Extensions</label>
+                <div id="ext-content">Loading…</div>
             </div>
         </div>
     </div>

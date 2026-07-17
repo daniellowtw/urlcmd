@@ -1,5 +1,5 @@
 // Opt-in Google Translate command. Enable it with:
-//   import tr examples/translate.js
+//   import tr x/translate.js
 //
 // Note: imported gen functions are serialized (Function.toString) and re-run in
 // isolation, so this must be self-contained — no closures over `name`/`utils`,
@@ -7,6 +7,7 @@
 // so we re-join them.
 function translate(name, utils) {
     return {
+        "cmd": "tr", // suggested default name (used by the Extensions list)
         "desc": "Google Translate",
         "usage": name + " [[from]:[to]] text",
         "example": "Example: " + name + " ro:fr buna ziua",

@@ -172,7 +172,7 @@ var coreCommands = {
     },
     "import-all": {
         "desc": "Import every command from a bundle url",
-        "example": "import-all examples/all.js",
+        "example": "import-all x/timestamp.js",
         gen: function(q, args) {
             if (args.length != 1) {
                 return {
@@ -444,6 +444,7 @@ if (supports_html5_storage()) {
         setUpHelp();
         setUpLoad();
         setUpReset();
+        setUpExt();
         setUpAutoComplete();
     });
 
@@ -516,6 +517,112 @@ function setUpReset() {
             listAll();
         }
     };
+}
+
+// setUpExt wires the Extensions button: it opens the modal and (re)renders the
+// list of available x/ extensions from the manifest.
+function setUpExt() {
+    var extEl = document.getElementById('ext');
+    var currentClass = extEl.className;
+    document.getElementById('extOpen').onclick = () => {
+        extEl.className += " is-active";
+        renderExtensions();
+    };
+    (extEl.lastElementChild as HTMLElement).onclick = () => {
+        extEl.className = currentClass;
+    };
+}
+
+// loadExtensionItems reads the manifest (x/index.json) and resolves each entry
+// to an item: either a single command { kind:"single", name, url, desc } using
+// the module's self-declared `cmd` name, or a bundle
+// { kind:"bundle", label, members:[{name,url,desc}] } that keeps its commands
+// grouped so the UI can show them under one heading.
+function loadExtensionItems(): Promise<any[]> {
+    return fetch("x/index.json").then(r => r.json()).then(files => {
+        return Promise.all(files.map(url =>
+            loadModule("", url).then((mod): any => {
+                if (mod.bundle) {
+                    var names = Object.keys(mod.bundle);
+                    return Promise.all(names.map(n =>
+                        loadModule(n, mod.bundle[n]).then(cmd => ({ name: n, url: mod.bundle[n], desc: cmd.desc }))
+                    )).then(members => ({ kind: "bundle", label: bundleLabel(url), members: members }));
+                }
+                return { kind: "single", name: mod.cmd || "", url: url, desc: mod.desc };
+            })
+        ));
+    });
+}
+
+// bundleLabel derives a display name from a module url, e.g. x/timestamp.js -> timestamp.
+function bundleLabel(url) {
+    return url.replace(/^.*\//, "").replace(/\.js$/, "");
+}
+
+// importExtension imports a single command (the module at `url`) under `name`.
+function importExtension(name, url) {
+    return loadModule(name, url).then(mod => {
+        aliases = getAliases();
+        aliases[name] = finalizeCommand(mod);
+        setAliases(aliases);
+        listAll();
+    });
+}
+
+// cmdRow renders one importable command row; `indent` nests bundle members.
+function cmdRow(name, url, desc, indent) {
+    var pad = indent ? ' style="padding-left:1.5em"' : '';
+    return '<tr><td' + pad + '><tt>' + name + '</tt></td><td>' + (desc || "")
+        + '</td><td><button class="button is-small ext-import" data-name="'
+        + name + '" data-url="' + url + '">Import</button></td></tr>';
+}
+
+// renderExtensions populates the Extensions modal from the current manifest.
+function renderExtensions() {
+    var el = document.getElementById('ext-content');
+    el.innerHTML = "Loading…";
+    loadExtensionItems().then((items: any[]) => {
+        var html = '<p><button class="button is-primary is-small" id="extImportAll">Import all</button></p>';
+        html += '<table class="table is-fullwidth">';
+        items.forEach((item, i) => {
+            if (item.kind === "bundle") {
+                html += '<tr><td><tt>' + item.label + '</tt></td>'
+                    + '<td><em>bundle · ' + item.members.length + ' commands</em></td>'
+                    + '<td><button class="button is-small ext-import-bundle" data-i="' + i
+                    + '">Import all ' + item.members.length + '</button></td></tr>';
+                item.members.forEach(m => { html += cmdRow(m.name, m.url, m.desc, true); });
+            } else {
+                html += cmdRow(item.name, item.url, item.desc, false);
+            }
+        });
+        html += '</table>';
+        el.innerHTML = html;
+
+        // A single command import (used by both single rows and bundle members).
+        Array.prototype.forEach.call(el.querySelectorAll('.ext-import'), (btn: any) => {
+            btn.onclick = () => {
+                importExtension(btn.getAttribute('data-name'), btn.getAttribute('data-url'))
+                    .then(() => { btn.textContent = "Imported ✓"; });
+            };
+        });
+        // Import every command in one bundle.
+        Array.prototype.forEach.call(el.querySelectorAll('.ext-import-bundle'), (btn: any) => {
+            btn.onclick = () => {
+                var members = items[btn.getAttribute('data-i')].members;
+                Promise.all(members.map(m => importExtension(m.name, m.url)))
+                    .then(() => { btn.textContent = "Imported ✓"; });
+            };
+        });
+        // Import everything (all singles + all bundle members).
+        document.getElementById('extImportAll').onclick = () => {
+            var all = [];
+            items.forEach(item => {
+                if (item.kind === "bundle") { all = all.concat(item.members); }
+                else { all.push(item); }
+            });
+            Promise.all(all.map(r => importExtension(r.name, r.url))).then(renderExtensions);
+        };
+    }).catch(e => { el.innerHTML = "Failed to load extensions: " + e; });
 }
 
 // displayEntries takes a result and returns a html string for representing the result in a table

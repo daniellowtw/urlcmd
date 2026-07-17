@@ -18,7 +18,7 @@ The following assumes you've added the keyword `url` for the search engine, and 
 
 * `alias x http://xkcd.com` means typing `url x` will redirect you to `http://xkcd.com`.
 * `alias gd https://godoc.org/?q={0}` means typing `url gd atomic` would search for atomic in another search engine.
-* `import gcd examples/gcd.js` will import the `gcd` function so that typing `url gcd 14 21` will print `7`.
+* `import gcd x/gcd.js` will import the `gcd` function so that typing `url gcd 14 21` will print `7`.
 * `alias x` will remove the alias `x`
 
 ## Installation
@@ -30,11 +30,10 @@ the address bar.
 
 ## Third party functions
 
-These are opt-in: import the ones you want to keep the defaults minimal, or grab
-everything at once with `import-all examples/all.js`.
+These are opt-in: import the ones you want to keep the defaults minimal.
 
-* Google Translate `import tr examples/translate.js`
-* Unix timestamps `import-all examples/timestamp.js` for all units (seconds/milli/micro/nanoseconds), or a single unit e.g. `import secs examples/timestamp-unit.js`
-* Greatest common divisor `import gcd examples/gcd.js`
-* Random number generator `import rand examples/rand.js`
-* Binary <-> ascii `import bin examples/bin.js`
+* Google Translate `import tr x/translate.js`
+* Unix timestamps `import-all x/timestamp.js` for all units (seconds/milli/micro/nanoseconds), or a single unit e.g. `import secs x/timestamp-unit.js`
+* Greatest common divisor `import gcd x/gcd.js`
+* Random number generator `import rand x/rand.js`
+* Binary <-> ascii `import bin x/bin.js`

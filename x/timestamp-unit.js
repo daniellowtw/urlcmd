@@ -1,7 +1,7 @@
 // A single Unix timestamp command, unit chosen by the alias name you import it
 // under (secs / msecs / usecs / nsecs). Usually you'd grab all four at once via
-// the bundle (`import-all examples/timestamp.js`), but you can import just one:
-//   import secs examples/timestamp-unit.js
+// the bundle (`import-all x/timestamp.js`), but you can import just one:
+//   import secs x/timestamp-unit.js
 //
 // `gen` is built with `new Function` (rather than a closure) so the baked-in
 // values survive the serialize/re-eval that import does. The math uses BigInt so

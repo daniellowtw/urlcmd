@@ -1,5 +1,6 @@
 function random(name, utils) {
     return {
+        "cmd": "rand",
         "desc": "Generate a random number from 1 to n inclusive, optional second argument for generating m numbers",
         "example": name + " 6 -> 3 </br>" + name + " 4 2 -> 1 1",
         "usage": name + " n [m]",

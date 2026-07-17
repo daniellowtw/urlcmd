@@ -1,5 +1,6 @@
 function gcd(name, utils) {
     return {
+        "cmd": "bin",
         "desc": "convert between binary and string",
         "example": name + " s2b -> 1",
         "gen": function(type, s) {

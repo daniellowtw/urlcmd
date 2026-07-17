@@ -1,5 +1,6 @@
 function gcd(name, utils) {
     return {
+        "cmd": "gcd",
         "desc": "Calculate the gcd of two numbers",
         "example": name + " 5 6 -> 1",
         "usage": name + " x y",
