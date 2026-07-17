@@ -39,53 +39,6 @@ var utils = {
 }
 
 var baseCommands = {
-    "secs": {
-        desc: "Unix timestamp conversion",
-        gen: function(q) {
-            if (!q) {
-                return {
-                    text: Math.floor(new Date().getTime() / 1000)
-                };
-            } else {
-                return {
-                    text: new Date(parseInt(q, 10) * 1000)
-                }
-            }
-        }
-    },
-    "msecs": {
-        desc: "Unix timestamp conversion (milliseconds)",
-        gen: function(q) {
-            if (!q) {
-                return {
-                    text: Math.floor(new Date().getTime())
-                };
-            } else {
-                return {
-                    text: new Date(parseInt(q, 10))
-                }
-            }
-        }
-    },
-    "tr": {
-        desc: "Google Translate",
-        usage: "tr [[from]:[to]] text",
-        example: "Example: tr ro:fr buna ziua",
-        gen: function(q) {
-            if (!q) {
-                return {
-                    text: this.example
-                };
-            }
-            var components = q.match(/^(([a-zA-Z\-]*):([a-zA-Z\-]*)\s+)?(.*$)/);
-            var from = components[2] || 'auto';
-            var to = components[3] || 'en';
-            var text = components[4];
-            return {
-                url: "https://translate.google.com/#view=home&op=translate&sl=" + from + "&tl=" + to + "&text=" + encodeURIComponent(text)
-            };
-        }
-    },
     "notepad" : {
         desc: "create a scratch pad",
         usage: "notepad",
@@ -166,25 +119,66 @@ var coreCommands = {
         }
     },
     "import": {
-        "desc": "Import commands/aliases from a url",
+        "desc": "Import a single command from a url",
         "example": "import bar foo.js",
         gen: function(q, args) {
             if (args.length != 2) {
                 return {
-                    "text": "Usage: import bar foo.js"
+                    "text": "Usage: import name url"
                 }
             }
 
             var name = args[0];
             var url = args[1];
-            importFromURL(name, url).then(cmd => {
+            loadModule(name, url).then(mod => {
+                if (mod.bundle) {
+                    displayContent(url + " is a bundle. Use: import-all " + url);
+                    return;
+                }
                 aliases = getAliases();
-                aliases[name] = cmd;
+                aliases[name] = finalizeCommand(mod);
                 setAliases(aliases);
+                listAll();
+                displayContent("Imported as " + name);
             }).catch(console.log)
 
             return {
-                "text": "Imported as " + name
+                "text": "Importing " + name + "…"
+            }
+        }
+    },
+    "import-all": {
+        "desc": "Import every command from a bundle url",
+        "example": "import-all examples/all.js",
+        gen: function(q, args) {
+            if (args.length != 1) {
+                return {
+                    "text": "Usage: import-all url"
+                }
+            }
+
+            var url = args[0];
+            loadModule("import-all", url).then(mod => {
+                if (!mod.bundle) {
+                    displayContent(url + " is not a bundle. Use: import name " + url);
+                    return;
+                }
+                // A bundle names further modules to import; pull them all,
+                // then persist in one write to avoid clobbering.
+                var names = Object.keys(mod.bundle);
+                return Promise.all(names.map(n =>
+                    loadModule(n, mod.bundle[n]).then(cmd => [n, finalizeCommand(cmd)])
+                )).then(pairs => {
+                    aliases = getAliases();
+                    pairs.forEach(p => { aliases[p[0]] = p[1]; });
+                    setAliases(aliases);
+                    listAll();
+                    displayContent("Imported: " + names.join(", "));
+                });
+            }).catch(console.log)
+
+            return {
+                "text": "Importing bundle…"
             }
         }
     },
@@ -199,13 +193,19 @@ var coreCommands = {
     }
 };
 
-function importFromURL(name, url) {
-    return System.import(url).then(m => {
-        var x = m(name, utils);
-        x.genString = x.gen.toString()
-        x.genSrc = true;
-        return x;
-    });
+// loadModule fetches an example module and instantiates it under the given
+// name. The result is either a single command object (has `gen`) or a bundle
+// (`{ bundle: { name: url, ... } }`) that names further modules to import.
+function loadModule(name, url) {
+    return System.import(url).then(m => m(name, utils));
+}
+
+// finalizeCommand serializes an imported command's `gen` so it can be persisted
+// to localStorage and re-evaluated later (see the genSrc branch in the loader).
+function finalizeCommand(cmd) {
+    cmd.genString = cmd.gen.toString();
+    cmd.genSrc = true;
+    return cmd;
 }
 
 function setAliases(aliases) {
