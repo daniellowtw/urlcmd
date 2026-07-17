@@ -180,31 +180,30 @@ function getAliases() {
 }
 
 function parseArgs(s) {
-    if (s.indexOf(s, '"') == -1) {
+    if (s.indexOf('"') == -1) {
         return s.split(" ");
     }
     var spaceSeparatedList = s.split(" ");
     var res = [];
-    var currWord = "";
     var currIndex = 0;
-    do {
-        currWord = spaceSeparatedList[currIndex];
+    while (currIndex < spaceSeparatedList.length) {
+        var currWord = spaceSeparatedList[currIndex];
         currIndex++;
         if (currWord[0] == '"') {
-            currWord= currWord.substr(1)
-            while((currWord[currWord.length-1] != '"') 
-                && (currIndex < spaceSeparatedList.length)) {
-                    var temp = spaceSeparatedList[currIndex];
-                    currIndex++;
-                    if (temp === undefined) {
-                        return spaceSeparatedList;
-                    }
-                    currWord += ` ${temp}`
-                    currWord = currWord.substring(0, currWord.length-1)
+            currWord = currWord.substr(1);
+            // Gather following words until we reach the one ending in a quote.
+            while (currWord[currWord.length - 1] != '"'
+                && currIndex < spaceSeparatedList.length) {
+                currWord += ` ${spaceSeparatedList[currIndex]}`;
+                currIndex++;
+            }
+            // Strip the trailing closing quote if it was found.
+            if (currWord[currWord.length - 1] == '"') {
+                currWord = currWord.substring(0, currWord.length - 1);
             }
         }
         res.push(currWord);
-    } while (currIndex < spaceSeparatedList.length)
+    }
     return res;
 }
 
