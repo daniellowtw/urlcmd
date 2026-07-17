@@ -87,8 +87,11 @@ var baseCommands = {
         desc: "create a scratch pad",
         usage: "notepad",
         gen: function () {
+            // Chrome blocks top-frame navigation to data: URLs, so serve the
+            // same HTML from a blob URL, which is allowed.
+            var blob = new Blob(["<html contenteditable><title>Notepad</title>"], { type: "text/html" });
             return {
-                url: "data:text/html,<html contenteditable>"
+                url: URL.createObjectURL(blob)
             };
         }
     }
