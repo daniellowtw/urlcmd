@@ -407,7 +407,7 @@ function splitArgs(loc): { [key: string]: string } {
 }
 
 
-function listAll(showHidden?) {
+function listAll(showHidden?, open?) {
     var result = [];
     var seen = {};
     // hacks to make sure we load latest aliases
@@ -429,10 +429,10 @@ function listAll(showHidden?) {
 
     // If updating fails because dom is not loaded, then wait for it to load.
     try {
-        document.getElementById('list-all-content').innerHTML = displayEntries(result, { showHidden: showHidden });
+        document.getElementById('list-all-content').innerHTML = displayEntries(result, { showHidden: showHidden, open: open });
     } catch (e) {
         document.addEventListener("DOMContentLoaded", function(event) {
-            document.getElementById('list-all-content').innerHTML = displayEntries(result, { showHidden: showHidden });
+            document.getElementById('list-all-content').innerHTML = displayEntries(result, { showHidden: showHidden, open: open });
         });
     }
 }
@@ -672,8 +672,12 @@ function displayEntries(result, opts?) {
         });
     }
 
+    // The list recedes into a collapsible panel so a command's response stays
+    // the focus. `opts.open` decides the default state: open on the landing and
+    // on help, collapsed after a normal command.
     var res = ""
-    res += "<h2>Available commands</h2>";
+    res += '<details class="cmd-list"' + (opts.open ? " open" : "") + ">";
+    res += "<summary>Available commands</summary>";
     res += '<table class="table is-bordered is-striped is-narrow">';
 
     for (var i = 0; i < result.length; i++) {
@@ -692,7 +696,7 @@ function displayEntries(result, opts?) {
         res += "</tr>\n";
     }
 
-    res += "</table><br/>";
+    res += "</table></details>";
     return res
 }
 
@@ -722,10 +726,14 @@ function executeCmd() {
                 displayContent(r.text);
             }
         }
-        listAll(r && r.listAll)
+        // Open the reference only when the command is `help`; otherwise it
+        // stays collapsed so the response is the focus.
+        var showAll = r && r.listAll;
+        listAll(showAll, showAll)
     } else {
+        // Landing: no response, so let the reference sit open for discovery.
         renderFirstRun();
-        listAll()
+        listAll(false, true)
     }
 }
 
