@@ -2,10 +2,11 @@
 default:
     @just --list
 
-# Type-check and compile+minify src/main.ts -> js/main.js
+# Type-check, compile+minify src/main.ts -> js/main.js, and trim Bulma -> css/app.css
 build:
     bun x tsc
     bun build ./src/main.ts --minify --format iife --outfile js/main.js
+    bun run scripts/purge-css.ts
 
 # Type-check only (no output)
 check:

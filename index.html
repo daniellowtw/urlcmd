@@ -7,10 +7,15 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <script src="js/complete.ly.1.0.1.js"></script>
-    <script src="js/system.js"></script>
+    <!-- main.js is the resolver; it runs executeCmd() synchronously and, for a
+         redirect, navigates immediately. It loads first and blocking so nothing
+         delays that path. SystemJS (~19KB gz, only needed for imports) is loaded
+         lazily from main.js on first use. The autocomplete widget is deferred:
+         fetched in parallel (never blocks the redirect) but ready by
+         DOMContentLoaded when setUpAutoComplete runs. -->
     <script src="js/main.js"></script>
-    <link rel="stylesheet" href="css/bulma.min.css">
+    <script defer src="js/complete.ly.1.0.1.js"></script>
+    <link rel="stylesheet" href="css/app.css">
     <link rel="search" type="application/opensearchdescription+xml" href="osd.xml" title="URL command">
     <style type="text/css">
     .table,

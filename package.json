@@ -8,11 +8,12 @@
     "bun": ">=1.0.0"
   },
   "scripts": {
-    "build": "tsc && bun build ./src/main.ts --minify --format iife --outfile js/main.js",
+    "build": "tsc && bun build ./src/main.ts --minify --format iife --outfile js/main.js && bun run scripts/purge-css.ts",
     "check": "tsc",
     "test": "bun run build && bun test"
   },
   "devDependencies": {
+    "purgecss": "^8.0.0",
     "typescript": "7.0.2"
   }
 }

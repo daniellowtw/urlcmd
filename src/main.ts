@@ -227,11 +227,29 @@ var coreCommands = {
     }
 };
 
+// loadScript injects a classic script once and resolves when it has run.
+// Heavy deps (SystemJS, the autocomplete widget) load through this on demand so
+// they stay off the initial critical path: a redirect never waits on them.
+var scriptPromises: { [src: string]: Promise<void> } = {};
+function loadScript(src): Promise<void> {
+    if (!scriptPromises[src]) {
+        scriptPromises[src] = new Promise<void>(function(resolve, reject) {
+            var s = document.createElement('script');
+            s.src = src;
+            s.onload = function() { resolve(); };
+            s.onerror = function() { reject(new Error("failed to load " + src)); };
+            (document.head || document.documentElement).appendChild(s);
+        });
+    }
+    return scriptPromises[src];
+}
+
 // loadModule fetches an example module and instantiates it under the given
 // name. The result is either a single command object (has `gen`) or a bundle
 // (`{ bundle: { name: url, ... } }`) that names further modules to import.
+// SystemJS (~19KB gz) is only needed here, so it is loaded lazily on first use.
 function loadModule(name, url) {
-    return System.import(url).then(m => m(name, utils));
+    return loadScript("js/system.js").then(() => System.import(url)).then(m => m(name, utils));
 }
 
 // finalizeCommand serializes an imported command's `gen` so it can be persisted
